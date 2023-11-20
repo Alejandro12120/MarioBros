@@ -72,11 +72,7 @@ class Mario:
 
         if gravedad and not self.toca_suelo(alto):
             self.__velocidad_y += self.__gravedad
-            self.__y += self.__velocidad_y
-        else:
-            self.__y += self.__velocidad_y
 
-        alto_mario = self.__sprite[4]
 
         # No puede salirse ni por arriba ni por abajo
         # Si la velocidad es negativa significa que va hacia arriba
@@ -86,7 +82,8 @@ class Mario:
         elif self.__velocidad_y > 0 and self.toca_suelo(alto):
             self.__velocidad_y = 0  # Reiniciamos la velocidad
 
-            self.__y = alto - alto_mario
+            
+        self.__y += self.__velocidad_y
 
     def saltar(self, alto: int):
         """Este método hará saltar a Mario
