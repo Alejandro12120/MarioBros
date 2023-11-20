@@ -5,10 +5,10 @@ class Bloque:
     def __init__(self, x: int, y: int, tuberia: bool, izquierda: bool):
         """Definimos un bloque, que puede ser una tuberia o un bloque normal
         
-        :param x: es la posicion x de inicio de la tortuga
-        :param y: es la posicion y de inicio de la tortuga
-        :param tuberia: es un bool para saber si es una tuberia o no
-        :param izquierda: es un bool para saber si es una tuberia izquierda o derecha
+        @param x: es la posicion x de inicio de la tortuga
+        @param y: es la posicion y de inicio de la tortuga
+        @param tuberia: es un bool para saber si es una tuberia o no
+        @param izquierda: es un bool para saber si es una tuberia izquierda o derecha
         """
         
         self.__id = id(self)

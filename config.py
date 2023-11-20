@@ -32,7 +32,10 @@ PLATAFORMA_GOLPEADA = [(1, 16, 32, 16, 16),
 # Mario
 INICIAL_MARIO = (0, 240)
 # TODO: Animaciones de Mario
-MARIO_SPRITE = (0, 0, 0, 16, 21)
+MARIO_SPRITE = [(0, 0, 0, 16, 21),
+                (0, 16, 0, 16, 21),
+                (0, 32, 0, 16, 21),
+                (0, 48, 0, 16, 21)]
 
 # Enemigo
 CANGREJO_SPRITE = [(0, 0, 72, 12, 16), 

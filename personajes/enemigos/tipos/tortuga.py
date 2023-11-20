@@ -7,9 +7,9 @@ class Tortuga(Enemigo):
         """Este método creará una tortuga
         Características: se mueve como mario, necesita un golpe para darle la vuelta
 
-        :param x: es la posicion x de inicio de la tortuga
-        :param y: es la posicion y de inicio de la tortuga
-        :param dir: es un int para almacenar la dirección, -1 si va a la izquierda, 1 si va a la derecha
+        @param x: es la posicion x de inicio de la tortuga
+        @param y: es la posicion y de inicio de la tortuga
+        @param dir: es un int para almacenar la dirección, -1 si va a la izquierda, 1 si va a la derecha
         """
 
         # Inicializamos la clase enemigo

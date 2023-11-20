@@ -6,9 +6,9 @@ class Cangrejo(Enemigo):
         """Este método creará un cangrejo
         Características: se mueve como mario, necesita un golpe para darle la vuelta
 
-        :param x: es la posicion x de inicio del cangrejo
-        :param y: es la posicion y de inicio del cangrejo
-        :param dir: es un int para almacenar la dirección, -1 si va a la izquierda, 1 si va a la derecha
+        @param x: es la posicion x de inicio del cangrejo
+        @param y: es la posicion y de inicio del cangrejo
+        @param dir: es un int para almacenar la dirección, -1 si va a la izquierda, 1 si va a la derecha
         """
 
         # Inicializamos la clase enemigo

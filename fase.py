@@ -5,7 +5,7 @@ from entidades.bloque import Bloque
 class Fase:
     def __init__(self, tablero):
         """Esta clase será la encargada de gestionar la fase
-        :param tablero: es el tablero en el que se dibujará la fase
+        @param tablero: es el tablero en el que se dibujará la fase
         """
         
         # Estos diccionarios actuará como visibilidad, es decir todo lo que estén en los diccionarios se dibujará

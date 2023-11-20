@@ -19,6 +19,10 @@ class Tablero:
     def update(self):
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
+        elif pyxel.btn(pyxel.KEY_A):
+            self.fase.mario.move(self.ancho, -1)
+        elif pyxel.btn(pyxel.KEY_D):
+            self.fase.mario.move(self.ancho, 1)
         # elif pyxel.btn(pyxel.KEY_RIGHT):
         #     self.mario.move('right', self.width)
         # elif pyxel.btn(pyxel.KEY_LEFT):

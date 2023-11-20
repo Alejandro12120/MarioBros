@@ -2,10 +2,10 @@ class Enemigo:
     def __init__(self, x: int, y: int, dir: int, sprites: list):
         """Este método creará un enemigo
 
-        :param x: es la posicion x de inicio del enemigo
-        :param y: es la posicion y de inicio del enemigo
-        :param dir: es un int para almacenar la dirección, -1 si va a la izquierda, 1 si va a la derecha
-        :param sprite: es una lista con los valores del sprite en forma de tupla (banco, u, v, ancho, alto)
+        @param x: es la posicion x de inicio del enemigo
+        @param y: es la posicion y de inicio del enemigo
+        @param dir: es un int para almacenar la dirección, -1 si va a la izquierda, 1 si va a la derecha
+        @param sprite: es una lista con los valores del sprite en forma de tupla (banco, u, v, ancho, alto)
         """
 
         # Guardamos una variable con el id del enemigo
