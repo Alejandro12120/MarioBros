@@ -19,10 +19,16 @@ class Tablero:
     def update(self):
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
-        elif pyxel.btn(pyxel.KEY_A):
+        if pyxel.btn(pyxel.KEY_A):
             self.fase.mario.move(self.ancho, -1)
-        elif pyxel.btn(pyxel.KEY_D):
+        if pyxel.btn(pyxel.KEY_D):
             self.fase.mario.move(self.ancho, 1)
+        if pyxel.btn(pyxel.KEY_SPACE) and self.fase.mario.toca_suelo(self.alto):
+            self.fase.mario.saltar(self.alto)
+        
+        # Implementación de la gravedad
+        self.fase.mario.move_y(self.alto, gravedad=True)
+        
         # elif pyxel.btn(pyxel.KEY_RIGHT):
         #     self.mario.move('right', self.width)
         # elif pyxel.btn(pyxel.KEY_LEFT):

@@ -23,8 +23,13 @@ class Mario:
         # Me creo un modo dios para hacer pruebas
         self.__godmode = False
 
+        self.__aceleracion_x = 1.6
+        self.__velocidad_y = 0
+
+        self.__gravedad = 0.5
+
     def move(self, ancho: int, dir: int = 0):
-        """Este método moverá a Mario
+        """Este método moverá a Mario horizontalmente
 
         @param ancho: es el ancho del tablero
         @param dir: es un int para almacenar la dirección, -1 si va a la izquierda, 1 si va a la derecha, por defecto 0
@@ -37,7 +42,7 @@ class Mario:
 
         # Actualizamos la x de Mario
         # Multiplicamos por 1.6 para que se mueva más rápido
-        self.__x += dir*1.6
+        self.__x += dir * self.__aceleracion_x
 
         # Si se sale por la derecha, aparece por la izquierda
         if dir == 1 and self.__x >= ancho:
@@ -57,6 +62,39 @@ class Mario:
 
         # Como hemos cambiado la animacion, actualizamos el sprite
         self.__actualizar_sprite()
+
+    def move_y(self, alto: int, gravedad: bool = True):
+        """Este método moverá a Mario verticalmente
+
+        @param alto: es el alto del tablero
+        @param gravedad: es un bool para saber si se aplica gravedad, por defecto True
+        """
+
+        if gravedad and not self.toca_suelo(alto):
+            self.__velocidad_y += self.__gravedad
+            self.__y += self.__velocidad_y
+        else:
+            self.__y += self.__velocidad_y
+
+        alto_mario = self.__sprite[4]
+
+        # No puede salirse ni por arriba ni por abajo
+        # Si la velocidad es negativa significa que va hacia arriba
+        # Si la velocidad es positiva significa que va hacia abajo
+        if self.__velocidad_y < 0 and self.__y <= 0:
+            self.__y = 0
+        elif self.__velocidad_y > 0 and self.toca_suelo(alto):
+            self.__velocidad_y = 0  # Reiniciamos la velocidad
+
+            self.__y = alto - alto_mario
+
+    def saltar(self, alto: int):
+        """Este método hará saltar a Mario
+        @param alto: es el alto del tablero
+        """
+
+        self.__velocidad_y = -5.5
+        self.move_y(alto, gravedad=False)
 
     def draw(self, pyxel):
         """Dibujamos a Mario
@@ -80,6 +118,16 @@ class Mario:
     def __actualizar_sprite(self):
         """Este método actualizará el sprite de Mario"""
         self.__sprite = config.MARIO_SPRITE[self.__animacion]
+
+    def toca_suelo(self, alto: int) -> bool:
+        # TODO: Plataformas, por ahora solo comprueba si está en el suelo
+
+        alto_mario = self.__sprite[4]
+
+        if self.__y + alto_mario >= alto:
+            return True
+
+        return False
 
     @property
     def vidas(self) -> int:
