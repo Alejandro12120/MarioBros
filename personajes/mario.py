@@ -82,12 +82,20 @@ class Mario:
         # Comprobamos de forma distinta si se golpea un bloque o si golpea un borde
         # Para ajustar la y en función de eso
 
-        bloque_golpeado = self.obtener_bloque_golpeado()
-        if self.__velocidad_y > 0 and bloque_golpeado is not None:
+        bloque_golpeado_inferior = self.obtener_bloque_golpeado(inferiormente=True)
+        # En caso de golpear un bloque mientras mario cae
+        if self.__velocidad_y > 0 and bloque_golpeado_inferior is not None:
             self.__velocidad_y = 0  # Reiniciamos la velocidad
 
             # Ajustamos su posición y
-            self.__y = bloque_golpeado.y + 5 - self.__sprite[4]
+            self.__y = bloque_golpeado_inferior.y + 5 - self.__sprite[4]
+            
+        
+        bloque_golpeado_superior = self.obtener_bloque_golpeado()    
+        if self.__velocidad_y < 0 and bloque_golpeado_superior is not None:
+            self.__velocidad_y = 0 
+            self.__velocidad_y += self.__gravedad
+            
 
         # No puede salirse ni por arriba ni por abajo
         # Si la velocidad es negativa significa que va hacia arriba
@@ -163,9 +171,10 @@ class Mario:
 
         return False
 
-    def obtener_bloque_golpeado(self) -> Optional[Bloque]:
+    def obtener_bloque_golpeado(self, inferiormente = False) -> Optional[Bloque]:
         """Este método obtiene el bloque que golpea Mario
 
+        @param inferiormente: es un bool para saber si se comprueba inferiormente, por defecto False
         @return: el bloque que golpea Mario, None si no golpea ningún bloque
         """
         alto_mario = self.__sprite[4]
@@ -174,12 +183,20 @@ class Mario:
         for bloque in self.__bloques.values():
             if bloque.tuberia:
                 continue
+            
+            if inferiormente:
+                if bloque.golpea(self.__x, self.__y + alto_mario):
+                    return bloque
 
-            if bloque.golpea(self.__x, self.__y + alto_mario):
-                return bloque
+                if bloque.golpea(self.__x + ancho_mario, self.__y + alto_mario):
+                    return bloque
+            else:
+                if bloque.golpea(self.__x, self.__y):
+                    return bloque
 
-            if bloque.golpea(self.__x + ancho_mario, self.__y + alto_mario):
-                return bloque
+                if bloque.golpea(self.__x + ancho_mario, self.__y):
+                    return bloque
+            
 
         return None
     
@@ -190,7 +207,7 @@ class Mario:
         @return: True si toca el suelo, False si no
         """
 
-        return self.toca_borde(alto) or self.obtener_bloque_golpeado() is not None
+        return self.toca_borde(alto) or self.obtener_bloque_golpeado(inferiormente=True) is not None
 
     @property
     def vidas(self) -> int:
