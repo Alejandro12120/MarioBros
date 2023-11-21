@@ -108,7 +108,7 @@ class Mario:
         self.__velocidad_y = -5.5
         self.move_y(alto, gravedad=False)
 
-    def draw(self, pyxel):
+    def draw(self, pyxel, hitboxes: bool = False):
         """Dibujamos a Mario
         @param x: es la posicion x de inicio de Mario
         @param y: es la posicion y de inicio de Mario
@@ -116,7 +116,6 @@ class Mario:
         """
 
         # Dibujamos a Mario
-        # TODO: Tener en cuenta animaciones
 
         # Si se mueve para la izquierda, se invierte el sprite
         if self.__direccion == -1:
@@ -142,6 +141,10 @@ class Mario:
                 self.__sprite[4],
                 8,
             )
+        
+        # Dibujamos las hitboxes
+        if hitboxes:
+            pyxel.rectb(self.__x, self.__y, self.__sprite[3], self.__sprite[4], 7)
 
     def __actualizar_sprite(self):
         """Este método actualizará el sprite de Mario"""

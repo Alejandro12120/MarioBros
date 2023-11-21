@@ -70,7 +70,7 @@ class Tablero:
         pyxel.text(20, 0, str(self.__puntuacion) + " P", 10)
 
         """Dibujamos a Mario"""
-        self.fase.mario.draw(pyxel)
+        self.fase.mario.draw(pyxel, hitboxes = self.__hitboxes)
         
         """Dibujamos hitboxes de las plataformas para hacer pruebas"""
         if self.__hitboxes:
