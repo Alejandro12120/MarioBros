@@ -15,6 +15,9 @@ class Tablero:
 
         # Esta lista contendrá dos tuplas con coordenadas x e y de donde saldrán los enemigos
         self.__spawner_enemigos = [(16, 5), (self.ancho - 16 - 12, 5)]  
+        
+        # Nos creamos un booleano para dibujar las hitboxes de las plataformas
+        self.__hitboxes = False
 
     def update(self):
         if pyxel.btnp(pyxel.KEY_Q):
@@ -25,6 +28,8 @@ class Tablero:
             self.fase.mario.move(self.ancho, 1)
         if pyxel.btn(pyxel.KEY_SPACE) and self.fase.mario.toca_suelo(self.alto):
             self.fase.mario.saltar(self.alto)
+        if pyxel.btnp(pyxel.KEY_E):
+            self.draw_hitboxes()
         
         # Implementación de la gravedad
         self.fase.mario.move_y(self.alto, gravedad=True)
@@ -66,7 +71,16 @@ class Tablero:
 
         """Dibujamos a Mario"""
         self.fase.mario.draw(pyxel)
-
+        
+        """Dibujamos hitboxes de las plataformas para hacer pruebas"""
+        if self.__hitboxes:
+            for bloque in self.fase.bloques.values():
+                if not bloque.tuberia:
+                    pyxel.rectb(bloque.x, bloque.y + 5, 16, 5, 7)
+            
+    
+    def draw_hitboxes(self):
+        self.__hitboxes = not self.__hitboxes
         
 
     @property

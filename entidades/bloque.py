@@ -25,7 +25,22 @@ class Bloque:
         else:
             self.__sprite = config.PLATAFORMA
             
+    
+    def golpea(self, x: int, y: int) -> bool:
+        """Este método comprueba si un punto golpea al bloque, es decir está dentro del bloque
         
+        @param x: es la posicion x del punto
+        @param y: es la posicion y del punto
+        @return: True si golpea, False si no
+        """
+        
+        if self.x <= x <= self.x + 16 and self.y + 5 <= y <= self.y + 10:
+            return True
+        
+        return False
+
+    def __str__(self):
+        return f"({self.x}, {self.y})"
     
     @property
     def x(self) -> int:

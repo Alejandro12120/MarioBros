@@ -1,11 +1,14 @@
 import config
+from entidades.bloque import Bloque
+from typing import Optional
 
 
 class Mario:
-    def __init__(self, x: int, y: int, dir: int = 1):
+    def __init__(self, x: int, y: int, bloques: dict, dir: int = 1):
         """Este método creará a Mario
         @param x: es la posicion x de inicio de Mario
         @param y: es la posicion y de inicio de Mario
+        @param bloques: es un diccionario con los bloques del tablero
         @param dir: es un int para almacenar la dirección, -1 si va a la izquierda, 1 si va a la derecha, por defecto 1
         """
 
@@ -19,6 +22,9 @@ class Mario:
 
         # Definimos el numero de vidas de Mario
         self.__vidas = 3
+
+        # Necesitamos los bloques para saber si Mario está en el suelo
+        self.__bloques = bloques
 
         # Me creo un modo dios para hacer pruebas
         self.__godmode = False
@@ -72,17 +78,26 @@ class Mario:
 
         if gravedad and not self.toca_suelo(alto):
             self.__velocidad_y += self.__gravedad
+            
+        # Comprobamos de forma distinta si se golpea un bloque o si golpea un borde
+        # Para ajustar la y en función de eso
 
+        bloque_golpeado = self.obtener_bloque_golpeado()
+        if self.__velocidad_y > 0 and bloque_golpeado is not None:
+            self.__velocidad_y = 0  # Reiniciamos la velocidad
+
+            # Ajustamos su posición y
+            self.__y = bloque_golpeado.y + 5 - self.__sprite[4]
 
         # No puede salirse ni por arriba ni por abajo
         # Si la velocidad es negativa significa que va hacia arriba
         # Si la velocidad es positiva significa que va hacia abajo
         if self.__velocidad_y < 0 and self.__y <= 0:
             self.__y = 0
-        elif self.__velocidad_y > 0 and self.toca_suelo(alto):
+        elif self.__velocidad_y > 0 and self.toca_borde(alto):
             self.__velocidad_y = 0  # Reiniciamos la velocidad
+            self.__y = alto - self.__sprite[4]  # Cambiamos su posición y
 
-            
         self.__y += self.__velocidad_y
 
     def saltar(self, alto: int):
@@ -105,26 +120,74 @@ class Mario:
 
         # Si se mueve para la izquierda, se invierte el sprite
         if self.__direccion == -1:
-            pyxel.blt(self.__x, self.__y, self.__sprite[0], self.__sprite[1],
-                      self.__sprite[2], -self.__sprite[3], self.__sprite[4], 8)
+            pyxel.blt(
+                self.__x,
+                self.__y,
+                self.__sprite[0],
+                self.__sprite[1],
+                self.__sprite[2],
+                -self.__sprite[3],
+                self.__sprite[4],
+                8,
+            )
         # Si se mueve para la derecha, se dibuja normal
         else:
-            pyxel.blt(self.__x, self.__y, self.__sprite[0], self.__sprite[1],
-                      self.__sprite[2], self.__sprite[3], self.__sprite[4], 8)
+            pyxel.blt(
+                self.__x,
+                self.__y,
+                self.__sprite[0],
+                self.__sprite[1],
+                self.__sprite[2],
+                self.__sprite[3],
+                self.__sprite[4],
+                8,
+            )
 
     def __actualizar_sprite(self):
         """Este método actualizará el sprite de Mario"""
         self.__sprite = config.MARIO_SPRITE[self.__animacion]
 
-    def toca_suelo(self, alto: int) -> bool:
-        # TODO: Plataformas, por ahora solo comprueba si está en el suelo
+    def toca_borde(self, alto: int) -> bool:
+        """Este método comprueba si Mario toca el borde del tablero
 
+        @param alto: es el alto del tablero
+        @return: True si toca el borde, False si no
+        """
         alto_mario = self.__sprite[4]
 
         if self.__y + alto_mario >= alto:
             return True
 
         return False
+
+    def obtener_bloque_golpeado(self) -> Optional[Bloque]:
+        """Este método obtiene el bloque que golpea Mario
+
+        @return: el bloque que golpea Mario, None si no golpea ningún bloque
+        """
+        alto_mario = self.__sprite[4]
+        ancho_mario = self.__sprite[3]
+
+        for bloque in self.__bloques.values():
+            if bloque.tuberia:
+                continue
+
+            if bloque.golpea(self.__x, self.__y + alto_mario):
+                return bloque
+
+            if bloque.golpea(self.__x + ancho_mario, self.__y + alto_mario):
+                return bloque
+
+        return None
+    
+    def toca_suelo(self, alto: int) -> bool:
+        """Este método comprueba si Mario toca el suelo
+
+        @param alto: es el alto del tablero
+        @return: True si toca el suelo, False si no
+        """
+
+        return self.toca_borde(alto) or self.obtener_bloque_golpeado() is not None
 
     @property
     def vidas(self) -> int:
