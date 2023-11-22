@@ -32,7 +32,7 @@ class Mario:
         self.__aceleracion_x = 1.6
         self.__velocidad_y = 0
 
-        self.__gravedad = 0.5
+        self.__gravedad = 0.4
 
     def move(self, ancho: int, dir: int = 0):
         """Este método moverá a Mario horizontalmente
@@ -111,7 +111,7 @@ class Mario:
         @param alto: es el alto del tablero
         """
 
-        self.__velocidad_y = -5.5
+        self.__velocidad_y = -5
         self.move_y(alto, gravedad=False)
 
     def draw(self, pyxel, hitboxes: bool = False):
