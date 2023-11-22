@@ -55,7 +55,7 @@ class Tablero:
                 8,
             )
             if not bloque.tuberia:
-                bloque.animate()  # Animamos las plataformas para volveras a su estado inicial ya que no la forzamos
+                bloque.animate()  # Animamos las plataformas para devolveras a su estado inicial ya que no la forzamos
 
         """Dibujamos la animación del texto de la fase"""
         pyxel.text(96, 80, "FASE " + str(self.fase.numero_fase), 7)
