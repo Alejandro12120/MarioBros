@@ -78,7 +78,7 @@ class Mario:
 
         if gravedad and not self.toca_suelo(alto):
             self.__velocidad_y += self.__gravedad
-            
+
         # Comprobamos de forma distinta si se golpea un bloque o si golpea un borde
         # Para ajustar la y en función de eso
 
@@ -89,13 +89,11 @@ class Mario:
 
             # Ajustamos su posición y
             self.__y = bloque_golpeado_inferior.y + 5 - self.__sprite[4]
-            
-        
-        bloque_golpeado_superior = self.obtener_bloque_golpeado()    
+
+        bloque_golpeado_superior = self.obtener_bloque_golpeado()
         if self.__velocidad_y < 0 and bloque_golpeado_superior is not None:
-            self.__velocidad_y = 0 
+            self.__velocidad_y = 0
             self.__velocidad_y += self.__gravedad
-            
 
         # No puede salirse ni por arriba ni por abajo
         # Si la velocidad es negativa significa que va hacia arriba
@@ -149,10 +147,13 @@ class Mario:
                 self.__sprite[4],
                 8,
             )
-        
+
         # Dibujamos las hitboxes
         if hitboxes:
-            pyxel.rectb(self.__x, self.__y, self.__sprite[3], self.__sprite[4], 7)
+            # Tenemos que hacer un ajuste de +-1 para que mario pueda pasar por los huecos
+            # Porque como el ancho de mario es 16, y justo los huecos son de 16, era muy dificil que pasase
+            # Entonces con un ajuste de +-1 en la x, mario puede pasar por los huecos
+            pyxel.rectb(self.__x + 1, self.__y, self.__sprite[3] - 1, self.__sprite[4], 7)
 
     def __actualizar_sprite(self):
         """Este método actualizará el sprite de Mario"""
@@ -171,7 +172,7 @@ class Mario:
 
         return False
 
-    def obtener_bloque_golpeado(self, inferiormente = False) -> Optional[Bloque]:
+    def obtener_bloque_golpeado(self, inferiormente=False) -> Optional[Bloque]:
         """Este método obtiene el bloque que golpea Mario
 
         @param inferiormente: es un bool para saber si se comprueba inferiormente, por defecto False
@@ -184,22 +185,22 @@ class Mario:
             if bloque.tuberia:
                 continue
             
+            # Hacemos el ajuste de +-1 explicado en el método draw
             if inferiormente:
-                if bloque.golpea(self.__x, self.__y + alto_mario):
+                if bloque.golpea(self.__x + 1, self.__y + alto_mario):
                     return bloque
 
-                if bloque.golpea(self.__x + ancho_mario, self.__y + alto_mario):
+                if bloque.golpea(self.__x + ancho_mario - 1, self.__y + alto_mario):
                     return bloque
             else:
-                if bloque.golpea(self.__x, self.__y):
+                if bloque.golpea(self.__x + 1, self.__y):
                     return bloque
 
-                if bloque.golpea(self.__x + ancho_mario, self.__y):
+                if bloque.golpea(self.__x + ancho_mario - 1, self.__y):
                     return bloque
-            
 
         return None
-    
+
     def toca_suelo(self, alto: int) -> bool:
         """Este método comprueba si Mario toca el suelo
 
@@ -207,7 +208,10 @@ class Mario:
         @return: True si toca el suelo, False si no
         """
 
-        return self.toca_borde(alto) or self.obtener_bloque_golpeado(inferiormente=True) is not None
+        return (
+            self.toca_borde(alto)
+            or self.obtener_bloque_golpeado(inferiormente=True) is not None
+        )
 
     @property
     def vidas(self) -> int:
