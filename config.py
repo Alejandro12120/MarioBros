@@ -24,10 +24,10 @@ Los bloques están en el banco 1
 TUBERIA_DERECHA = (1, 0, 0, 16, 16)  # ampliable en ancho hasta 32
 TUBERIA_IZQUIERDA = (1, 16, 16, 16, 16)  # ampliable en ancho hasta 32
 
-PLATAFORMA = (1, 0, 32, 16, 16)
-PLATAFORMA_GOLPEADA = [(1, 16, 32, 16, 16),
-                       (1, 32, 32, 16, 16),
-                       (1, 48, 32, 16, 16)]
+PLATAFORMA = [(1, 0, 32, 16, 16),
+              (1, 16, 32, 16, 16),
+              (1, 32, 32, 16, 16),
+              (1, 48, 32, 16, 16)]
 
 # Mario
 INICIAL_MARIO = (0, 240)

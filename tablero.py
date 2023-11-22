@@ -14,8 +14,8 @@ class Tablero:
         self.__puntuacion: int = 0
 
         # Esta lista contendrá dos tuplas con coordenadas x e y de donde saldrán los enemigos
-        self.__spawner_enemigos = [(16, 5), (self.ancho - 16 - 12, 5)]  
-        
+        self.__spawner_enemigos = [(16, 5), (self.ancho - 16 - 12, 5)]
+
         # Nos creamos un booleano para dibujar las hitboxes de las plataformas
         self.__hitboxes = False
 
@@ -30,10 +30,10 @@ class Tablero:
             self.fase.mario.saltar(self.alto)
         if pyxel.btnp(pyxel.KEY_E):
             self.draw_hitboxes()
-        
+
         # Implementación de la gravedad
         self.fase.mario.move_y(self.alto, gravedad=True)
-        
+
         # elif pyxel.btn(pyxel.KEY_RIGHT):
         #     self.mario.move('right', self.width)
         # elif pyxel.btn(pyxel.KEY_LEFT):
@@ -54,6 +54,8 @@ class Tablero:
                 bloque.sprite[4],
                 8,
             )
+            if not bloque.tuberia:
+                bloque.animate()  # Animamos las plataformas para volveras a su estado inicial ya que no la forzamos
 
         """Dibujamos la animación del texto de la fase"""
         pyxel.text(96, 80, "FASE " + str(self.fase.numero_fase), 7)
@@ -70,18 +72,16 @@ class Tablero:
         pyxel.text(20, 0, str(self.__puntuacion) + " P", 10)
 
         """Dibujamos a Mario"""
-        self.fase.mario.draw(pyxel, hitboxes = self.__hitboxes)
-        
+        self.fase.mario.draw(pyxel, hitboxes=self.__hitboxes)
+
         """Dibujamos hitboxes de las plataformas para hacer pruebas"""
         if self.__hitboxes:
             for bloque in self.fase.bloques.values():
                 if not bloque.tuberia:
                     pyxel.rectb(bloque.x, bloque.y + 5, 16, 5, 7)
-            
-    
+
     def draw_hitboxes(self):
         self.__hitboxes = not self.__hitboxes
-        
 
     @property
     def ancho(self):

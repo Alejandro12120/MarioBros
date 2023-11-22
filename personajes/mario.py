@@ -82,7 +82,7 @@ class Mario:
         # Comprobamos de forma distinta si se golpea un bloque o si golpea un borde
         # Para ajustar la y en función de eso
 
-        bloque_golpeado_inferior = self.obtener_bloque_golpeado(inferiormente=True)
+        bloque_golpeado_inferior = self.obtener_bloque_golpeado(True)
         # En caso de golpear un bloque mientras mario cae
         if self.__velocidad_y > 0 and bloque_golpeado_inferior is not None:
             self.__velocidad_y = 0  # Reiniciamos la velocidad
@@ -94,6 +94,8 @@ class Mario:
         if self.__velocidad_y < 0 and bloque_golpeado_superior is not None:
             self.__velocidad_y = 0
             self.__velocidad_y += self.__gravedad
+            
+            bloque_golpeado_superior.animate(True) # Forzamos la animación de la plataforma
 
         # No puede salirse ni por arriba ni por abajo
         # Si la velocidad es negativa significa que va hacia arriba

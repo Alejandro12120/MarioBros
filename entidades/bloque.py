@@ -16,6 +16,7 @@ class Bloque:
         self.__x = x
         self.__y = y
         self.__tuberia = tuberia
+        self.__animacion = 0
         
         if self.tuberia:
             if izquierda:
@@ -23,7 +24,7 @@ class Bloque:
             else:
                 self.__sprite = config.TUBERIA_DERECHA
         else:
-            self.__sprite = config.PLATAFORMA
+            self.__sprite = config.PLATAFORMA[self.__animacion]
             
     
     def golpea(self, x: int, y: int) -> bool:
@@ -38,9 +39,29 @@ class Bloque:
             return True
         
         return False
+    
+    def animate(self, forzar: bool = False):
+        """Este método anima el bloque, sólo válido para plataformas
+        
+        @param forzar: es un bool para forzar la animación, es decir que empezará a animar a la plataforma
+        """
+        # Esta función se llamará en dos ocasiones, cuando mario la golpeé que entonces forzaremos la animación
+        # Y cuando se dibujen los bloques, de tal forma que si ya está animada volverá a su estado inicial
+        
+        if self.tuberia: return
+        
+        if self.__animacion == 0 and not forzar: return
+        
+        self.__animacion += 1
+        
+        if self.__animacion >= len(config.PLATAFORMA):
+            self.__animacion = 0
+            
+        self.__sprite = config.PLATAFORMA[self.__animacion]
+    
 
     def __str__(self):
-        return f"({self.x}, {self.y})"
+        return "(%i, %i)" % (self.x, self.y)
     
     @property
     def x(self) -> int:
