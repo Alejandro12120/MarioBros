@@ -114,48 +114,7 @@ class Mario:
         """
 
         self.__velocidad_y = -5
-        self.move_y(alto, gravedad=False)
-
-    def draw(self, pyxel, hitboxes: bool = False):
-        """Dibujamos a Mario
-        @param x: es la posicion x de inicio de Mario
-        @param y: es la posicion y de inicio de Mario
-        @param pyxel: es el objeto de pyxel
-        """
-
-        # Dibujamos a Mario
-
-        # Si se mueve para la izquierda, se invierte el sprite
-        if self.__direccion == -1:
-            pyxel.blt(
-                self.__x,
-                self.__y,
-                self.__sprite[0],
-                self.__sprite[1],
-                self.__sprite[2],
-                -self.__sprite[3],
-                self.__sprite[4],
-                8,
-            )
-        # Si se mueve para la derecha, se dibuja normal
-        else:
-            pyxel.blt(
-                self.__x,
-                self.__y,
-                self.__sprite[0],
-                self.__sprite[1],
-                self.__sprite[2],
-                self.__sprite[3],
-                self.__sprite[4],
-                8,
-            )
-
-        # Dibujamos las hitboxes
-        if hitboxes:
-            # Tenemos que hacer un ajuste de +-1 para que mario pueda pasar por los huecos
-            # Porque como el ancho de mario es 16, y justo los huecos son de 16, era muy dificil que pasase
-            # Entonces con un ajuste de +-1 en la x, mario puede pasar por los huecos
-            pyxel.rectb(self.__x + 1, self.__y, self.__sprite[3] - 1, self.__sprite[4], 7)
+        self.move_y(alto, gravedad=False) 
 
     def __actualizar_sprite(self):
         """Este método actualizará el sprite de Mario"""
@@ -187,7 +146,7 @@ class Mario:
             if bloque.tuberia:
                 continue
             
-            # Hacemos el ajuste de +-1 explicado en el método draw
+            # Hacemos el ajuste de +-1 explicado en el método tablero.draw()
             if inferiormente:
                 if bloque.golpea(self.__x + 1, self.__y + alto_mario):
                     return bloque
@@ -219,3 +178,23 @@ class Mario:
     def vidas(self) -> int:
         """Vidas de Mario"""
         return self.__vidas
+    
+    @property
+    def x(self) -> int:
+        """Posición x de Mario"""
+        return self.__x
+    
+    @property
+    def y(self) -> int:
+        """Posición y de Mario"""
+        return self.__y
+    
+    @property
+    def sprite(self) -> tuple:
+        """Sprite de Mario"""
+        return self.__sprite
+    
+    @property
+    def direccion(self) -> int:
+        """Dirección de Mario"""
+        return self.__direccion

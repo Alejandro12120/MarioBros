@@ -55,7 +55,8 @@ class Tablero:
                 8,
             )
             if not bloque.tuberia:
-                bloque.animate()  # Animamos las plataformas para devolveras a su estado inicial ya que no la forzamos
+                # Animamos las plataformas para devolveras a su estado inicial ya que no la forzamos
+                bloque.animate()
 
         """Dibujamos la animación del texto de la fase"""
         pyxel.text(96, 80, "FASE " + str(self.fase.numero_fase), 7)
@@ -71,14 +72,31 @@ class Tablero:
         """Dibujamos la puntuación"""
         pyxel.text(20, 0, str(self.__puntuacion) + " P", 10)
 
-        """Dibujamos a Mario"""
-        self.fase.mario.draw(pyxel, hitboxes=self.__hitboxes)
-
-        """Dibujamos hitboxes de las plataformas para hacer pruebas"""
+        """Dibujamos a Mario, teniendo en cuenta la dirección"""
+        pyxel.blt(
+            self.fase.mario.x,
+            self.fase.mario.y,
+            self.fase.mario.sprite[0],
+            self.fase.mario.sprite[1],
+            self.fase.mario.sprite[2],
+            self.fase.mario.direccion * self.fase.mario.sprite[3],
+            self.fase.mario.sprite[4],
+            8,
+        )
+        
+        """Dibujamos las hitboxes"""
         if self.__hitboxes:
+            """Hitbox de mario"""
+            # Tenemos que hacer un ajuste de +-1 para que mario pueda pasar por los huecos
+            # Porque como el ancho de mario es 16, y justo los huecos son de 16, era muy dificil que pasase
+            # Entonces con un ajuste de +-1 en la x, mario puede pasar por los huecos
+            pyxel.rectb(self.fase.mario.x + 1, self.fase.mario.y, self.fase.mario.sprite[3] - 1, self.fase.mario.sprite[4], 7)
+            
+            """Hitboxes de los bloques"""
             for bloque in self.fase.bloques.values():
                 if not bloque.tuberia:
                     pyxel.rectb(bloque.x, bloque.y + 5, 16, 5, 7)
+            
 
     def draw_hitboxes(self):
         self.__hitboxes = not self.__hitboxes
