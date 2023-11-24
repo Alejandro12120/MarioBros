@@ -1,5 +1,9 @@
+import random
+
 from personajes.mario import Mario
 from entidades.bloque import Bloque
+from personajes.enemigos.tipos.cangrejo import Cangrejo
+from personajes.enemigos.tipos.tortuga import Tortuga
 
 
 class Fase:
@@ -69,6 +73,25 @@ class Fase:
 
             plataforma = Bloque(i * 16, 96, False, False)
             self.bloques[plataforma.id] = plataforma
+        
+        """Cargamos los enemigos"""
+        
+        # Vamos a meter todos los enemigos en self.__enemigos_de_la_fase
+        # Se generarán de forma aleatoria
+        # Y se irán pasando a self.__enemigos para ser dibujados
+        
+        # Generamos 30 enemigos
+        for i in range(30):
+            # Les metemos una posición especial -1, -1, que indicará que se generen en el spawner
+            # Le metemos una dirección 0, ya que dependerá del lado en el que se generen
+            # Entonces cuando los generemos, les asignaremos una posición y una dirección
+            if random.randint(0, 1) == 0:
+                enemigo = Cangrejo(-1, -1, 0)
+            else:
+                enemigo = Tortuga(-1, -1, 0)
+            
+            self.__enemigos_de_la_fase[enemigo.id] = enemigo
+            
 
     @property
     def bloques(self) -> dict:

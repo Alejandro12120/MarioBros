@@ -1,4 +1,4 @@
-from enemigo import Enemigo
+from ..enemigo import Enemigo
 import config
 
 

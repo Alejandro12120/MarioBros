@@ -72,3 +72,10 @@ class Enemigo:
         
         self.__sprites = sprites
     
+    @direccion.setter
+    def direccion(self, dir: int):
+        if type(dir) != int:
+            raise TypeError("El atributo direccion debe ser un int")
+        
+        self.__direccion = dir
+    
