@@ -18,6 +18,8 @@ class Enemigo:
         self.__tumbado = False
         
         self.__sprites = sprites
+        
+        self.__animacion = 0
 
         # Variable para controlar si el enemigo está tocando el suelo
         # Es necesario para que pueda ser tumbado
@@ -64,6 +66,10 @@ class Enemigo:
     def id(self):
         return self.__id
     
+    @property
+    def sprite(self):
+        return self.__sprites[self.__animacion]
+    
     # Creamos un setter para los sprites ya que los cambiaremos cuando se tumben a los enemigos
     @sprites.setter
     def sprites(self, sprites: list):
@@ -78,4 +84,18 @@ class Enemigo:
             raise TypeError("El atributo direccion debe ser un int")
         
         self.__direccion = dir
+        
+    @x.setter
+    def x(self, x: int):
+        if type(x) != int:
+            raise TypeError("El atributo x debe ser un int")
+        
+        self.__x = x
+        
+    @y.setter
+    def y(self, y: int):
+        if type(y) != int:
+            raise TypeError("El atributo y debe ser un int")
+        
+        self.__y = y
     

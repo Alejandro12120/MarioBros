@@ -1,6 +1,6 @@
 from fase import Fase
 import pyxel
-import config
+import random
 
 
 class Tablero:
@@ -83,20 +83,38 @@ class Tablero:
             self.fase.mario.sprite[4],
             8,
         )
-        
+
+        """Dibujamos los enemigos"""
+        for enemigo in self.fase.enemigos.values():
+            pyxel.blt(
+                enemigo.x,
+                enemigo.y,
+                enemigo.sprite[0],
+                enemigo.sprite[1],
+                enemigo.sprite[2],
+                enemigo.sprite[3],
+                enemigo.sprite[4],
+                8,
+            )
+
         """Dibujamos las hitboxes"""
         if self.__hitboxes:
             """Hitbox de mario"""
             # Tenemos que hacer un ajuste de +-1 para que mario pueda pasar por los huecos
             # Porque como el ancho de mario es 16, y justo los huecos son de 16, era muy dificil que pasase
             # Entonces con un ajuste de +-1 en la x, mario puede pasar por los huecos
-            pyxel.rectb(self.fase.mario.x + 1, self.fase.mario.y, self.fase.mario.sprite[3] - 1, self.fase.mario.sprite[4], 7)
-            
+            pyxel.rectb(
+                self.fase.mario.x + 1,
+                self.fase.mario.y,
+                self.fase.mario.sprite[3] - 1,
+                self.fase.mario.sprite[4],
+                7,
+            )
+
             """Hitboxes de los bloques"""
             for bloque in self.fase.bloques.values():
                 if not bloque.tuberia:
                     pyxel.rectb(bloque.x, bloque.y + 5, 16, 5, 7)
-            
 
     def draw_hitboxes(self):
         self.__hitboxes = not self.__hitboxes

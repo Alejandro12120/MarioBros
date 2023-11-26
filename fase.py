@@ -16,7 +16,7 @@ class Fase:
         # Además los ids de los objetos serán las claves de los diccionarios
         self.__bloques: dict = {}
         self.__enemigos: dict = {}
-        self.__enemigos_de_la_fase: dict = {} # Este diccionario contendrá todos los enemigos que saldrán progresivamente
+        self.__enemigos_de_la_fase: dict =  {} # Este diccionario contendrá todos los enemigos que saldrán progresivamente
 
         self.__numero_fase: int = 1
         self.__mario: Mario = Mario(96, 107, self.__bloques, 1)
@@ -38,7 +38,9 @@ class Fase:
         tuberia_abajo_izquierda = Bloque(0, self.__tablero.alto - 16, True, True)
         self.bloques[tuberia_abajo_izquierda.id] = tuberia_abajo_izquierda
 
-        tuberia_abajo_derecha = Bloque(self.__tablero.ancho - 16, self.__tablero.alto - 16, True, False)
+        tuberia_abajo_derecha = Bloque(
+            self.__tablero.ancho - 16, self.__tablero.alto - 16, True, False
+        )
         self.bloques[tuberia_abajo_derecha.id] = tuberia_abajo_derecha
 
         # Plataformas
@@ -73,13 +75,13 @@ class Fase:
 
             plataforma = Bloque(i * 16, 96, False, False)
             self.bloques[plataforma.id] = plataforma
-        
+
         """Cargamos los enemigos"""
-        
+
         # Vamos a meter todos los enemigos en self.__enemigos_de_la_fase
         # Se generarán de forma aleatoria
         # Y se irán pasando a self.__enemigos para ser dibujados
-        
+
         # Generamos 30 enemigos
         for i in range(30):
             # Les metemos una posición especial -1, -1, que indicará que se generen en el spawner
@@ -89,9 +91,37 @@ class Fase:
                 enemigo = Cangrejo(-1, -1, 0)
             else:
                 enemigo = Tortuga(-1, -1, 0)
-            
+
             self.__enemigos_de_la_fase[enemigo.id] = enemigo
+
+    def spawnear_enemigo(self, spawner: tuple):
+        """Este método se encargará de spawnear un enemigo de forma aleatoria"""
+
+        # Si no quedan enemigos, no hacemos nada
+        if len(self.__enemigos_de_la_fase) == 0:
+            return
+
+        # Obtenemos el primer enemigo del diccionario de enemigos de la fase, y lo metemos en el diccionario de enemigos
+        # para que se dibuje
+
+        # Obtenemos el primer enemigo del diccionario
+        enemigo = self.__enemigos_de_la_fase.popitem()[1]
+
+        # Si es el spawner de la derecha, le asignamos la dirección -1
+        # Si es el spawner de la izquierda, le asignamos la dirección 1
+        if spawner[0] == 16:
+            enemigo.direccion = 1
+        else:
+            enemigo.direccion = -1
             
+        # Le asignamos la posición del spawner
+        enemigo.x = spawner[0]
+        enemigo.y = spawner[1]
+        
+        # Lo metemos en el diccionario de enemigos
+        self.__enemigos[enemigo.id] = enemigo
+        # Lo eliminamos del diccionario de enemigos de la fase
+        del enemigo
 
     @property
     def bloques(self) -> dict:
