@@ -34,7 +34,7 @@ class Mario:
 
         self.__gravedad = 0.4
 
-    def move(self, ancho: int, dir: int = 0):
+    def move_x(self, ancho: int, dir: int = 0):
         """Este método moverá a Mario horizontalmente
 
         @param ancho: es el ancho del tablero

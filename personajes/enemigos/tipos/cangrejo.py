@@ -1,18 +1,20 @@
 from ..enemigo import Enemigo
 import config
 
+
 class Cangrejo(Enemigo):
-    def __init__(self, x: int, y: int, dir: int):
+    def __init__(self, x: int, y: int, dir: int, bloques: dict):
         """Este método creará un cangrejo
         Características: se mueve como mario, necesita un golpe para darle la vuelta
 
         @param x: es la posicion x de inicio del cangrejo
         @param y: es la posicion y de inicio del cangrejo
         @param dir: es un int para almacenar la dirección, -1 si va a la izquierda, 1 si va a la derecha
+        @param bloques: es un diccionario con los bloques del tablero
         """
 
         # Inicializamos la clase enemigo
-        super().__init__(x, y, dir, config.CANGREJO_SPRITE)
+        super().__init__(x, y, dir, config.CANGREJO_SPRITE, bloques)
         
         # Almacenamos el número de golpes que ha recibido
         self.__golpes_recibidos = 0
@@ -22,16 +24,33 @@ class Cangrejo(Enemigo):
         
         # Almacenamos una variable para saber si el cangrejo está enfadado
         self.__enfadado = False
-    
-    def move(self):
-        """Como cada enemigo se mueve de una forma diferente, cada uno tendrá su propio método para moverse"""
         
+        # Aceleración en el eje x
+        self.__aceleracion_x = 1
+        
+        
+    def move_x(self, ancho: int):
+        """Como cada enemigo se mueve de una forma diferente, cada uno tendrá su propio método para moverse"""
         # Si el enemigo está tumbado no se moverá
         if not self.tumbado:
-            # Los cangrejos se mueven como Mario
-            # TODO: Hay que hacer que si sale del tablero aparezca en el otro lado
-            # TODO: si el cangrejo está enfadado se mueve más rápido y cambia el sprite
-            self.__x += self.__direccion
+            # Las tortugas se mueven como Mario
+            # Actualizamos la x del enemigo
+            self.x += self.direccion * self.__aceleracion_x
+
+            # Si se sale por la derecha, aparece por la izquierda
+            if self.direccion == 1 and self.x >= ancho:
+                self.x = 0
+            # Si se sale por la izquierda, aparece por la derecha
+            elif self.direccion == -1 and self.x <= 0:
+                self.x = ancho
+            
+            # Actualizamos la animación
+            self.animacion += 1
+            # Reiniciamos la animación si se ha pasado
+            if self.animacion >= len(self.sprites):
+                self.animacion = 0
+            
+            # El sprite no es necesario actualizarlo, ya que se actualiza en el getter 
     
     def comprobar_si_ha_sido_tumbado(self):
         """Este método comprueba si el cangrejo ha sido tumbado"""

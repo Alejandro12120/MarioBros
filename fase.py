@@ -88,9 +88,9 @@ class Fase:
             # Le metemos una dirección 0, ya que dependerá del lado en el que se generen
             # Entonces cuando los generemos, les asignaremos una posición y una dirección
             if random.randint(0, 1) == 0:
-                enemigo = Cangrejo(-1, -1, 0)
+                enemigo = Cangrejo(-1, -1, 0, self.bloques)
             else:
-                enemigo = Tortuga(-1, -1, 0)
+                enemigo = Tortuga(-1, -1, 0, self.bloques)
 
             self.__enemigos_de_la_fase[enemigo.id] = enemigo
 
@@ -107,8 +107,8 @@ class Fase:
         # Obtenemos el primer enemigo del diccionario
         enemigo = self.__enemigos_de_la_fase.popitem()[1]
 
-        # Si es el spawner de la derecha, le asignamos la dirección -1
         # Si es el spawner de la izquierda, le asignamos la dirección 1
+        # Si es el spawner de la derecha, le asignamos la dirección -1
         if spawner[0] == 16:
             enemigo.direccion = 1
         else:
@@ -122,6 +122,21 @@ class Fase:
         self.__enemigos[enemigo.id] = enemigo
         # Lo eliminamos del diccionario de enemigos de la fase
         del enemigo
+    
+    def despawnear_enemigo(self, id: int, respawn: bool = False):
+        """Este método se encargará de despawnear un enemigo"""
+        
+        # Si el enemigo no está spawneado, no hacemos nada
+        if id not in self.__enemigos:
+            return
+        
+        enemigo = self.__enemigos[id]
+        
+        if respawn:
+            # Si queremos que el enemigo se vuelva a spawnear, lo metemos en el diccionario de enemigos de la fase
+            self.__enemigos_de_la_fase[enemigo.id] = enemigo
+        
+        del self.__enemigos[id] # Lo despawneamos, es decir lo eliminamos del diccionario de enemigos
 
     @property
     def bloques(self) -> dict:

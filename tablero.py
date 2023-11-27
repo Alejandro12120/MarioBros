@@ -30,9 +30,9 @@ class Tablero:
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
         if pyxel.btn(pyxel.KEY_A) or pyxel.btn(pyxel.KEY_LEFT):
-            self.fase.mario.move(self.ancho, -1)
+            self.fase.mario.move_x(self.ancho, -1)
         if pyxel.btn(pyxel.KEY_D) or pyxel.btn(pyxel.KEY_RIGHT):
-            self.fase.mario.move(self.ancho, 1)
+            self.fase.mario.move_x(self.ancho, 1)
         if (pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.KEY_UP)) and self.fase.mario.toca_suelo(self.alto):
             self.fase.mario.saltar(self.alto)
         if pyxel.btnp(pyxel.KEY_E):
@@ -40,7 +40,16 @@ class Tablero:
 
         # Implementación de la gravedad
         self.fase.mario.move_y(self.alto, gravedad=True)
-
+        
+        # Cada 4 segundos (30 fps * 4) se generará un enemigo
+        # En el segundo 0 no se generará nada
+        if pyxel.frame_count % 120 == 0 and pyxel.frame_count != 0:
+            self.fase.spawnear_enemigo(self.__spawner_enemigos[random.randint(0, 1)])
+        
+        # Movimiento de los enemigos
+        for enemigo in self.fase.enemigos.values():
+            enemigo.move_x(self.ancho)
+            
         
 
     def draw(self):
@@ -96,7 +105,7 @@ class Tablero:
                 enemigo.sprite[0],
                 enemigo.sprite[1],
                 enemigo.sprite[2],
-                enemigo.sprite[3],
+                enemigo.direccion * enemigo.sprite[3],
                 enemigo.sprite[4],
                 8,
             )
@@ -119,6 +128,11 @@ class Tablero:
             for bloque in self.fase.bloques.values():
                 if not bloque.tuberia:
                     pyxel.rectb(bloque.x, bloque.y + 5, 16, 5, 7)
+                
+            """Hitboxes de los enemigos"""
+            # Tenemos que hacer el mismo ajuste que con mario
+            for enemigo in self.fase.enemigos.values():
+                pyxel.rectb(enemigo.x + 1, enemigo.y, enemigo.sprite[3] - 1, enemigo.sprite[4], 7)
 
     def draw_hitboxes(self):
         self.__hitboxes = not self.__hitboxes
