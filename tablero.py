@@ -20,13 +20,20 @@ class Tablero:
         self.__hitboxes = False
 
     def update(self):
+        # Controles:
+        # Q: Salir del juego
+        # A o flecha izquierda: Mover a Mario a la izquierda
+        # D o flecha derecha: Mover a Mario a la derecha
+        # ESPACIO o flecha arriba: Hacer saltar a Mario
+        # E: Mostrar las hitboxes
+        
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
-        if pyxel.btn(pyxel.KEY_A):
+        if pyxel.btn(pyxel.KEY_A) or pyxel.btn(pyxel.KEY_LEFT):
             self.fase.mario.move(self.ancho, -1)
-        if pyxel.btn(pyxel.KEY_D):
+        if pyxel.btn(pyxel.KEY_D) or pyxel.btn(pyxel.KEY_RIGHT):
             self.fase.mario.move(self.ancho, 1)
-        if pyxel.btn(pyxel.KEY_SPACE) and self.fase.mario.toca_suelo(self.alto):
+        if (pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.KEY_UP)) and self.fase.mario.toca_suelo(self.alto):
             self.fase.mario.saltar(self.alto)
         if pyxel.btnp(pyxel.KEY_E):
             self.draw_hitboxes()
@@ -34,10 +41,7 @@ class Tablero:
         # Implementación de la gravedad
         self.fase.mario.move_y(self.alto, gravedad=True)
 
-        # elif pyxel.btn(pyxel.KEY_RIGHT):
-        #     self.mario.move('right', self.width)
-        # elif pyxel.btn(pyxel.KEY_LEFT):
-        #     self.mario.move('left', self.width)
+        
 
     def draw(self):
         pyxel.cls(0)
