@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 from entidades.bloque import Bloque
 
 
@@ -57,7 +57,7 @@ class Enemigo:
     def toca_borde(self, alto: int) -> bool:
         """Este método comprueba si el enemigo está tocando el borde"""
         
-        alto_enemigo = self.__sprite[4]
+        alto_enemigo = self.sprite[4]
 
         if self.__y + alto_enemigo >= alto:
             return True
@@ -70,8 +70,8 @@ class Enemigo:
         @param inferiormente: es un bool para saber si se comprueba inferiormente, por defecto False
         @return: el bloque que golpea Mario, None si no golpea ningún bloque
         """
-        alto_enemigo = self.__sprite[4]
-        ancho_enemigo = self.__sprite[3]
+        alto_enemigo = self.sprite[4]
+        ancho_enemigo = self.sprite[3]
 
         for bloque in self.__bloques.values():
             if bloque.tuberia:
@@ -146,16 +146,16 @@ class Enemigo:
         self.__direccion = dir
 
     @x.setter
-    def x(self, x: int):
-        if type(x) != int:
-            raise TypeError("El atributo x debe ser un int")
+    def x(self, x: Union[int, float]):
+        if type(x) != int and type(x) != float:
+            raise TypeError("El atributo x debe ser un int o un float")
 
         self.__x = x
 
     @y.setter
-    def y(self, y: int):
-        if type(y) != int:
-            raise TypeError("El atributo y debe ser un int")
+    def y(self, y: Union[int, float]):
+        if type(y) != int and type(y) != float:
+            raise TypeError("El atributo y debe ser un int o un float")
 
         self.__y = y
 

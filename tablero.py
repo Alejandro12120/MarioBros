@@ -50,6 +50,9 @@ class Tablero:
         for enemigo in self.fase.enemigos.values():
             enemigo.move_x(self.ancho)
             
+            # Implementación de la gravedad
+            enemigo.move_y(self.alto)
+            
         
 
     def draw(self):

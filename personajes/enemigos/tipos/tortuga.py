@@ -21,47 +21,74 @@ class Tortuga(Enemigo):
 
         # Almacenamos el número máximo de golpes que puede recibir
         self.__golpes_maximo = 1
-        
+
         # Aceleración en el eje x
         self.__aceleracion_x = 1
         self.__velocidad_y = 0
-        
+
         self.__gravedad = 0.4
 
     def move_x(self, ancho: int):
         """Este método mueve la tortuga horizontalmente
-        
+
         @param ancho: es el ancho del tablero
         """
-        
-        #Como cada enemigo se mueve de una forma diferente, cada uno tendrá su propio método para moverse
-        # Si el enemigo está tumbado no se moverá
-        if not self.tumbado:
-            # Las tortugas se mueven como Mario
-            # Actualizamos la x del enemigo
-            self.x += self.direccion * self.__aceleracion_x
 
-            # Si se sale por la derecha, aparece por la izquierda
-            if self.direccion == 1 and self.x >= ancho:
-                self.x = 0
-            # Si se sale por la izquierda, aparece por la derecha
-            elif self.direccion == -1 and self.x <= 0:
-                self.x = ancho
-            
-            # Actualizamos la animación
-            self.animacion += 1
-            # Reiniciamos la animación si se ha pasado
-            if self.animacion >= len(self.sprites):
-                self.animacion = 0
-            
-            # El sprite no es necesario actualizarlo, ya que se actualiza en el getter 
-    
+        # Como cada enemigo se mueve de una forma diferente, cada uno tendrá su propio método para moverse
+        # Si el enemigo está tumbado no se moverá
+        # Si el enemigo está cayendo no se moverá
+        if self.tumbado or self.__velocidad_y > 0:
+            return
+        
+        # Las tortugas se mueven como Mario
+        # Actualizamos la x del enemigo
+        self.x += self.direccion * self.__aceleracion_x
+
+        # Si se sale por la derecha, aparece por la izquierda
+        if self.direccion == 1 and self.x >= ancho:
+            self.x = 0
+        # Si se sale por la izquierda, aparece por la derecha
+        elif self.direccion == -1 and self.x <= 0:
+            self.x = ancho
+
+        # Actualizamos la animación
+        self.animacion += 1
+        # Reiniciamos la animación si se ha pasado
+        if self.animacion >= len(self.sprites):
+            self.animacion = 0
+
+        # El sprite no es necesario actualizarlo, ya que se actualiza en el getter
+
     def move_y(self, alto: int):
         """Este método mueve la tortuga verticalmente, como las tortugas no saltan, se asume que siempre será por gravedad
-        
+
         @param alto: es el alto del tablero
         """
         
+        if not self.toca_suelo(alto):
+            self.__velocidad_y += self.__gravedad
+            
+        # Comprobamos de forma distinta si se golpea un bloque o si golpea un borde
+        # Para ajustar la y en función de eso
+        
+        bloque_golpeado_inferior = self.obtener_bloque_golpeado(True)
+        # En caso de golpear un bloque mientras el enemigo cae
+        if self.__velocidad_y > 0 and bloque_golpeado_inferior is not None:
+            self.__velocidad_y = 0  # Reiniciamos la velocidad
+
+            # Ajustamos su posición y
+            self.y = bloque_golpeado_inferior.y + 5 - self.sprite[4]
+        
+        # No puede salirse ni por arriba ni por abajo
+        # Si la velocidad es negativa significa que va hacia arriba
+        # Si la velocidad es positiva significa que va hacia abajo
+        if self.__velocidad_y < 0 and self.y <= 0:
+            self.y = 0
+        elif self.__velocidad_y > 0 and self.toca_borde(alto):
+            self.__velocidad_y = 0  # Reiniciamos la velocidad
+            self.y = alto - self.sprite[4]  # Cambiamos su posición y
+
+        self.y += self.__velocidad_y
         
 
     def comprobar_si_ha_sido_tumbado(self):
@@ -88,6 +115,6 @@ class Tortuga(Enemigo):
 
         # Reiniciamos los golpes recibidos
         self.__golpes_recibidos = 0
-        
+
         # Cambiamos los sprites
         self.sprites = config.CANGREJO_SPRITE
