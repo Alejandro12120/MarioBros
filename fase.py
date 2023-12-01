@@ -51,7 +51,7 @@ class Fase:
             if i == 6:
                 continue  # Hacemos que no se dibuje las plataformas de en medio
 
-            plataforma = Bloque(i * 16, 16, False, False)
+            plataforma = Bloque(i * 16, 18, False, False)
             self.bloques[plataforma.id] = plataforma
 
         # Las plataformas de en medio dan un poco más de dolor de cabeza

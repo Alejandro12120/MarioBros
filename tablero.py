@@ -15,7 +15,7 @@ class Tablero:
         self.__puntuacion: int = 0
 
         # Esta lista contendrá dos tuplas con coordenadas x e y de donde saldrán los enemigos
-        self.__spawner_enemigos = [(16, 5), (self.ancho - 16 - 12, 5)]
+        self.__spawner_enemigos = [(16, 7), (self.ancho - 16 - 12, 7)]
 
         # Nos creamos un booleano para dibujar las hitboxes de las plataformas
         self.__hitboxes = False
