@@ -1,6 +1,7 @@
 from fase import Fase
 import pyxel
 import random
+from personajes.enemigos.tipos.mosca import Mosca
 
 
 class Tablero:
@@ -48,10 +49,8 @@ class Tablero:
         
         # Movimiento de los enemigos
         for enemigo in self.fase.enemigos.values():
-            enemigo.move_x(self.ancho)
-            
-            # Implementación de la gravedad
-            enemigo.move_y(self.alto)
+            # Llamamos al método genérico de movimiento de cada enemigo
+            enemigo.move(self.ancho, self.alto)
             
         
 
@@ -135,7 +134,8 @@ class Tablero:
             """Hitboxes de los enemigos"""
             # Tenemos que hacer el mismo ajuste que con mario
             for enemigo in self.fase.enemigos.values():
-                pyxel.rectb(enemigo.x + 1, enemigo.y, enemigo.sprite[3] - 1, enemigo.sprite[4], 7)
+                # Las moscas tienen diferente hitbox
+                pyxel.rectb(enemigo.x + enemigo.hitbox, enemigo.y, enemigo.sprite[3] - enemigo.hitbox, enemigo.sprite[4], 7)
 
     def draw_hitboxes(self):
         self.__hitboxes = not self.__hitboxes

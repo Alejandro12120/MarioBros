@@ -14,7 +14,7 @@ class Cangrejo(Enemigo):
         """
 
         # Inicializamos la clase enemigo
-        super().__init__(x, y, dir, config.CANGREJO_SPRITE, bloques)
+        super().__init__(x, y, dir, config.CANGREJO_SPRITE, bloques, 1)
 
         # Almacenamos el número de golpes que ha recibido
         self.__golpes_recibidos = 0
@@ -30,9 +30,22 @@ class Cangrejo(Enemigo):
         self.__velocidad_y = 0
 
         self.__gravedad = 0.4
+        
+    def move(self, ancho: int, alto: int):
+        # Como cada enemigo se mueve de una forma diferente, cada uno tendrá su propio método para moverse
+        
+        """Este método mueve al cangrejo
+        
+        @param ancho: es el ancho del tablero
+        @param alto: es el alto del tablero
+        """
+        
+        self.move_x(ancho)
+        
+        # Implementamos la gravedad
+        self.move_y(alto)
 
     def move_x(self, ancho: int):
-        """Como cada enemigo se mueve de una forma diferente, cada uno tendrá su propio método para moverse"""
         # Si el enemigo está tumbado no se moverá
         # Si el enemigo está cayendo no se moverá
         if self.tumbado or self.__velocidad_y > 0:

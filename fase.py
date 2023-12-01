@@ -2,9 +2,10 @@ import random
 
 from personajes.mario import Mario
 from entidades.bloque import Bloque
+from personajes.enemigos.enemigo import Enemigo
 from personajes.enemigos.tipos.cangrejo import Cangrejo
 from personajes.enemigos.tipos.tortuga import Tortuga
-
+from personajes.enemigos.tipos.mosca import Mosca
 
 class Fase:
     def __init__(self, tablero):
@@ -14,9 +15,9 @@ class Fase:
 
         # Estos diccionarios actuará como visibilidad, es decir todo lo que estén en los diccionarios se dibujará
         # Además los ids de los objetos serán las claves de los diccionarios
-        self.__bloques: dict = {}
-        self.__enemigos: dict = {}
-        self.__enemigos_de_la_fase: dict =  {} # Este diccionario contendrá todos los enemigos que saldrán progresivamente
+        self.__bloques: dict[int, Bloque]  = {}
+        self.__enemigos: dict[int, Enemigo]  = {}
+        self.__enemigos_de_la_fase: dict[int, Enemigo] =  {} # Este diccionario contendrá todos los enemigos que saldrán progresivamente
 
         self.__numero_fase: int = 1
         self.__mario: Mario = Mario(96, 107, self.__bloques, 1)
@@ -87,11 +88,14 @@ class Fase:
             # Les metemos una posición especial -1, -1, que indicará que se generen en el spawner
             # Le metemos una dirección 0, ya que dependerá del lado en el que se generen
             # Entonces cuando los generemos, les asignaremos una posición y una dirección
-            if random.randint(0, 1) == 0:
+            num = random.randint(0, 2)
+            if num == 0:
                 enemigo = Cangrejo(-1, -1, 0, self.bloques)
-            else:
+            elif num == 1:
                 enemigo = Tortuga(-1, -1, 0, self.bloques)
-
+            else:
+                enemigo = Mosca(-1, -1, 0, self.bloques)
+            
             self.__enemigos_de_la_fase[enemigo.id] = enemigo
 
     def spawnear_enemigo(self, spawner: tuple):
@@ -139,12 +143,12 @@ class Fase:
         del self.__enemigos[id] # Lo despawneamos, es decir lo eliminamos del diccionario de enemigos
 
     @property
-    def bloques(self) -> dict:
+    def bloques(self) -> dict[int, Bloque]:
         """Lista de bloques"""
         return self.__bloques
 
     @property
-    def enemigos(self) -> dict:
+    def enemigos(self) -> dict[int, Enemigo]:
         """Lista de enemigos"""
         return self.__enemigos
 

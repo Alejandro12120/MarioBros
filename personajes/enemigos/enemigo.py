@@ -3,7 +3,7 @@ from entidades.bloque import Bloque
 
 
 class Enemigo:
-    def __init__(self, x: int, y: int, dir: int, sprites: list, bloques: dict):
+    def __init__(self, x: int, y: int, dir: int, sprites: list, bloques: dict, hitbox: int):
         """Este método creará un enemigo
 
         @param x: es la posicion x de inicio del enemigo
@@ -11,6 +11,7 @@ class Enemigo:
         @param dir: es un int para almacenar la dirección, -1 si va a la izquierda, 1 si va a la derecha
         @param sprite: es una lista con los valores del sprite en forma de tupla (banco, u, v, ancho, alto)
         @param bloques: es un diccionario con los bloques del tablero
+        @param hitbox: es un ajuste que tenemos que hacer para que los enemigos entren bien por los huecos
         """
 
         # Guardamos una variable con el id del enemigo
@@ -32,6 +33,8 @@ class Enemigo:
         # Variable para controlar si el enemigo está tocando el suelo
         # Es necesario para que pueda ser tumbado
         self.__tocando_suelo = False
+        
+        self.__hitbox = hitbox
 
     def tumbar(self):
         """Este método tumba al enemigo"""
@@ -79,16 +82,16 @@ class Enemigo:
 
             # Hacemos el ajuste de +-1 explicado en el método tablero.draw()
             if inferiormente:
-                if bloque.golpea(self.__x + 1, self.__y + alto_enemigo):
+                if bloque.golpea(self.__x + self.__hitbox, self.__y + alto_enemigo):
                     return bloque
 
-                if bloque.golpea(self.__x + ancho_enemigo - 1, self.__y + alto_enemigo):
+                if bloque.golpea(self.__x + ancho_enemigo - self.__hitbox, self.__y + alto_enemigo):
                     return bloque
             else:
-                if bloque.golpea(self.__x + 1, self.__y):
+                if bloque.golpea(self.__x + self.__hitbox, self.__y):
                     return bloque
 
-                if bloque.golpea(self.__x + ancho_enemigo - 1, self.__y):
+                if bloque.golpea(self.__x + ancho_enemigo - self.__hitbox, self.__y):
                     return bloque
 
         return None
@@ -129,6 +132,10 @@ class Enemigo:
     @property
     def animacion(self):
         return self.__animacion
+
+    @property
+    def hitbox(self):
+        return self.__hitbox
 
     # Creamos un setter para los sprites ya que los cambiaremos cuando se tumben a los enemigos
     @sprites.setter

@@ -110,11 +110,12 @@ class Mario:
 
     def saltar(self, alto: int):
         """Este método hará saltar a Mario
+        
         @param alto: es el alto del tablero
         """
 
         self.__velocidad_y = -5
-        self.move_y(alto, gravedad=False) 
+        self.move_y(alto, False) 
 
     def __actualizar_sprite(self):
         """Este método actualizará el sprite de Mario"""
