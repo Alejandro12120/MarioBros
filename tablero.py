@@ -49,9 +49,26 @@ class Tablero:
         
         # Movimiento de los enemigos
         for enemigo in self.fase.enemigos.values():
-            # Llamamos al método genérico de movimiento de cada enemigo
+            # Llamamos al método específico de movimiento de cada enemigo
             enemigo.move(self.ancho, self.alto)
+        
+        # Animaciones de los bloques, y eliminación de los bloques pow
+        
+        a_eliminar = []
+        
+        for bloque in self.fase.bloques.values():
+            if bloque.pow and bloque.animacion == -1:
+                # Si el bloque pow ha terminado su animación, lo eliminamos de los bloques
+                a_eliminar.append(bloque.id)
+                continue
             
+            if not bloque.tuberia and not bloque.pow:
+                # Animamos las plataformas para devolveras a su estado inicial ya que no la forzamos
+                bloque.animate()
+        
+        # Eliminamos los bloques pow
+        for id in a_eliminar:
+            del self.fase.bloques[id]
         
 
     def draw(self):
@@ -69,9 +86,6 @@ class Tablero:
                 bloque.sprite[4],
                 8,
             )
-            if not bloque.tuberia:
-                # Animamos las plataformas para devolveras a su estado inicial ya que no la forzamos
-                bloque.animate()
 
         """Dibujamos la animación del texto de la fase"""
         pyxel.text(96, 80, "FASE " + str(self.fase.numero_fase), 7)
@@ -128,8 +142,11 @@ class Tablero:
 
             """Hitboxes de los bloques"""
             for bloque in self.fase.bloques.values():
-                if not bloque.tuberia:
+                if not bloque.tuberia and not bloque.pow:
                     pyxel.rectb(bloque.x, bloque.y + 5, 16, 5, 7)
+                
+                if bloque.pow:
+                    pyxel.rectb(bloque.x, bloque.y, 16, 16, 7)
                 
             """Hitboxes de los enemigos"""
             # Tenemos que hacer el mismo ajuste que con mario

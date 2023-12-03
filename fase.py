@@ -30,18 +30,16 @@ class Fase:
         """Cargamos los bloques"""
 
         # Tuberías
-        tuberia_arriba_izquierda = Bloque(0, 4, True, True)
+        tuberia_arriba_izquierda = Bloque(0, 4, "TUBERIA_IZQ")
         self.bloques[tuberia_arriba_izquierda.id] = tuberia_arriba_izquierda
 
-        tuberia_arriba_derecha = Bloque(self.__tablero.ancho - 16, 4, True, False)
+        tuberia_arriba_derecha = Bloque(self.__tablero.ancho - 16, 4, "TUBERIA_DER")
         self.bloques[tuberia_arriba_derecha.id] = tuberia_arriba_derecha
 
-        tuberia_abajo_izquierda = Bloque(0, self.__tablero.alto - 16, True, True)
+        tuberia_abajo_izquierda = Bloque(0, self.__tablero.alto - 16, "TUBERIA_IZQ")
         self.bloques[tuberia_abajo_izquierda.id] = tuberia_abajo_izquierda
 
-        tuberia_abajo_derecha = Bloque(
-            self.__tablero.ancho - 16, self.__tablero.alto - 16, True, False
-        )
+        tuberia_abajo_derecha = Bloque(self.__tablero.ancho - 16, self.__tablero.alto - 16, "TUBERIA_DER")
         self.bloques[tuberia_abajo_derecha.id] = tuberia_abajo_derecha
 
         # Plataformas
@@ -51,7 +49,7 @@ class Fase:
             if i == 6:
                 continue  # Hacemos que no se dibuje las plataformas de en medio
 
-            plataforma = Bloque(i * 16, 18, False, False)
+            plataforma = Bloque(i * 16, 18, "PLATAFORMA")
             self.bloques[plataforma.id] = plataforma
 
         # Las plataformas de en medio dan un poco más de dolor de cabeza
@@ -62,11 +60,11 @@ class Fase:
             if 2 <= i <= 10:
                 continue
 
-            plataforma = Bloque(i * 16, 64, False, False)
+            plataforma = Bloque(i * 16, 64, "PLATAFORMA")
             self.bloques[plataforma.id] = plataforma
 
         for i in range(3, 10):
-            plataforma = Bloque(i * 16, 56, False, False)
+            plataforma = Bloque(i * 16, 56, "PLATAFORMA")
             self.bloques[plataforma.id] = plataforma
 
         # Ultima linea de plataformas
@@ -74,8 +72,12 @@ class Fase:
             if 5 <= i <= 7:
                 continue  # Hacemos que no se dibuje las plataformas de en medio
 
-            plataforma = Bloque(i * 16, 96, False, False)
+            plataforma = Bloque(i * 16, 96, "PLATAFORMA")
             self.bloques[plataforma.id] = plataforma
+        
+        # Bloque POW
+        pow = Bloque(96, 96, "POW")
+        self.bloques[pow.id] = pow
 
         """Cargamos los enemigos"""
 
