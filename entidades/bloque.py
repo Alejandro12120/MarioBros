@@ -40,8 +40,17 @@ class Bloque:
         @return: True si golpea, False si no
         """
 
-        if self.x <= x <= self.x + 16 and self.y + 5 <= y <= self.y + 10:
-            return True
+        if self.__tuberia: return False
+        
+        if self.__pow:
+            # Los bloques POW tienen una altura dinámica
+            if self.x <= x <= self.x + 16 and self.y <= y <= self.y + self.__sprite[4]:
+                return True
+
+            return False
+        else:
+            if self.x <= x <= self.x + 16 and self.y + 5 <= y <= self.y + 10:
+                return True
 
         return False
 

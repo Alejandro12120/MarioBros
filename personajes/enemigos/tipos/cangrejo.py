@@ -62,11 +62,7 @@ class Cangrejo(Enemigo):
         elif self.direccion == -1 and self.x <= 0:
             self.x = ancho
 
-        # Actualizamos la animación
-        self.animacion += 1
-        # Reiniciamos la animación si se ha pasado
-        if self.animacion >= len(self.sprites):
-            self.animacion = 0
+        self.animar()
 
         # El sprite no es necesario actualizarlo, ya que se actualiza en el getter
 

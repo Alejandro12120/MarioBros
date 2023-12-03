@@ -29,12 +29,17 @@ class Enemigo:
 
         # Nos guardamos los bloques para poder comprobar si el enemigo está tocando el suelo
         self.__bloques = bloques
-
-        # Variable para controlar si el enemigo está tocando el suelo
-        # Es necesario para que pueda ser tumbado
-        self.__tocando_suelo = False
         
         self.__hitbox = hitbox
+
+    def animar(self):
+        """Este método anima al enemigo"""
+        # Actualizamos la animación
+        self.animacion += 1
+        
+        # Reiniciamos la animación si se ha pasado
+        if self.animacion >= len(self.sprites):
+            self.animacion = 0
 
     def tumbar(self):
         """Este método tumba al enemigo"""
@@ -118,15 +123,14 @@ class Enemigo:
         return self.__tumbado
 
     @property
-    def tocando_suelo(self):
-        return self.__tocando_suelo
-
-    @property
     def id(self):
         return self.__id
 
     @property
     def sprite(self):
+        if self.__animacion >= len(self.__sprites):
+            self.__animacion = 0
+        
         return self.__sprites[self.__animacion]
 
     @property

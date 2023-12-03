@@ -20,7 +20,7 @@ class Fase:
         self.__enemigos_de_la_fase: dict[int, Enemigo] =  {} # Este diccionario contendrá todos los enemigos que saldrán progresivamente
 
         self.__numero_fase: int = 1
-        self.__mario: Mario = Mario(96, 107, self.__bloques, 1)
+        self.__mario: Mario = Mario(96, 107, self.__bloques, self.__enemigos, 1)
 
         self.__tablero = tablero
 

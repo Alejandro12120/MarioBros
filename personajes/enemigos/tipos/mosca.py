@@ -62,12 +62,7 @@ class Mosca(Enemigo):
         elif self.direccion == -1 and self.x <= 0:
             self.x = ancho
             
-        # Actualizamos la animación
-        self.animacion += 1
-        
-        # Reiniciamos la animación si se ha pasado
-        if self.animacion >= len(self.sprites):
-            self.animacion = 0
+        self.animar()
             
         # El sprite no es necesario actualizarlo porque se actualiza en el getter de la animación
     
@@ -109,5 +104,35 @@ class Mosca(Enemigo):
         @param alto: es el alto del tablero
         """
         
+        if self.tumbado: return
+        
         self.__velocidad_y = -1.25
         self.move_y(alto, False)
+    
+    def comprobar_si_ha_sido_tumbado(self):
+        """Este método comprueba si la mosca ha sido tumbada"""
+        if self.__golpes_recibidos >= self.__golpes_maximo:
+            self.tumbar()
+
+    def recibir_golpe(self):
+        """Este método hace que la mosca reciba un golpe"""
+        self.__golpes_recibidos += 1
+        # Comprobamos si ha sido tumbada
+        self.comprobar_si_ha_sido_tumbado()
+
+    def tumbar(self):
+        """Este método, tumba a la mosca, hacemos un override para cambiar el sprite"""
+        super().tumbar()
+
+        # Cambiamos los sprites
+        self.sprites = config.MOSCA_TUMBADA_SPRITE
+
+    def levantar(self):
+        """Este método levanta a la mosca, hacemos un override para reiniciar al enemigo"""
+        super().levantar()  # Llamamos a la clase enemigo para levantarla
+
+        # Reiniciamos los golpes recibidos
+        self.__golpes_recibidos = 0
+
+        # Cambiamos los sprites
+        self.sprites = config.MOSCA_SPRITE

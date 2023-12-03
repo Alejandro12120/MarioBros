@@ -47,11 +47,17 @@ class Tablero:
         if pyxel.frame_count % 120 == 0 and pyxel.frame_count != 0:
             self.fase.spawnear_enemigo(self.__spawner_enemigos[random.randint(0, 1)])
         
-        # Movimiento de los enemigos
+        # Movimiento de los enemigos, y animaciones de los enemigos tumbados
         for enemigo in self.fase.enemigos.values():
             # Llamamos al método específico de movimiento de cada enemigo
             enemigo.move(self.ancho, self.alto)
-        
+            # Llamamos al método animar de cada enemigo, solo en caso de que esté tumbado
+            if enemigo.tumbado:
+                # Le metemos un delay de 20 frames para que no se mueva tan rápido
+                # 20 frames son 0,6 segundos
+                if pyxel.frame_count % 20 == 0:
+                    enemigo.animar()
+                    
         # Animaciones de los bloques, y eliminación de los bloques pow
         
         a_eliminar = []
@@ -146,7 +152,7 @@ class Tablero:
                     pyxel.rectb(bloque.x, bloque.y + 5, 16, 5, 7)
                 
                 if bloque.pow:
-                    pyxel.rectb(bloque.x, bloque.y, 16, 16, 7)
+                    pyxel.rectb(bloque.x, bloque.y, 16, bloque.sprite[4], 7)
                 
             """Hitboxes de los enemigos"""
             # Tenemos que hacer el mismo ajuste que con mario

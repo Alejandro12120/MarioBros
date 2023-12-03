@@ -4,11 +4,12 @@ from typing import Optional
 
 
 class Mario:
-    def __init__(self, x: int, y: int, bloques: dict, dir: int = 1):
+    def __init__(self, x: int, y: int, bloques: dict, enemigos: dict, dir: int = 1):
         """Este método creará a Mario
         @param x: es la posicion x de inicio de Mario
         @param y: es la posicion y de inicio de Mario
         @param bloques: es un diccionario con los bloques del tablero
+        @param enemigos: es un diccionario con los enemigos del tablero
         @param dir: es un int para almacenar la dirección, -1 si va a la izquierda, 1 si va a la derecha, por defecto 1
         """
 
@@ -25,6 +26,8 @@ class Mario:
 
         # Necesitamos los bloques para saber si Mario está en el suelo
         self.__bloques = bloques
+        # Necesitamos los enemigos para controlar casi todo el juego
+        self.__enemigos = enemigos
 
         # Me creo un modo dios para hacer pruebas
         self.__godmode = False
@@ -88,14 +91,26 @@ class Mario:
             self.__velocidad_y = 0  # Reiniciamos la velocidad
 
             # Ajustamos su posición y
-            self.__y = bloque_golpeado_inferior.y + 5 - self.__sprite[4]
+            if bloque_golpeado_inferior.pow:
+                self.__y = bloque_golpeado_inferior.y - self.__sprite[4]
+            else:
+                self.__y = bloque_golpeado_inferior.y + 5 - self.__sprite[4]
 
         bloque_golpeado_superior = self.obtener_bloque_golpeado()
         if self.__velocidad_y < 0 and bloque_golpeado_superior is not None:
             self.__velocidad_y = 0
             self.__velocidad_y += self.__gravedad
             
-            bloque_golpeado_superior.animate(True) # Forzamos la animación de la plataforma
+            bloque_golpeado_superior.animate(True) # Forzamos la animación del bloque
+            
+            if bloque_golpeado_superior.pow:
+                # Si el bloque es un pow, volteamos todos los enemigos
+                for enemigo in self.__enemigos.values():
+                    if enemigo.toca_suelo(alto):
+                        if enemigo.tumbado:
+                            enemigo.levantar()
+                        else:
+                            enemigo.tumbar()
 
         # No puede salirse ni por arriba ni por abajo
         # Si la velocidad es negativa significa que va hacia arriba
