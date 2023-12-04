@@ -26,7 +26,7 @@ class Cangrejo(Enemigo):
         self.__enfadado = False
 
         # Aceleración en el eje x
-        self.__aceleracion_x = 1
+        self.__aceleracion_x = 0.7
         self.__velocidad_y = 0
 
         self.__gravedad = 0.4
