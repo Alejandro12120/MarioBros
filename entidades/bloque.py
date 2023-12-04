@@ -17,6 +17,8 @@ class Bloque:
         self.__animacion = 0
         self.__tuberia = False
         self.__pow = False
+        
+        self.__golpeable = True
 
         if tipo == "TUBERIA_IZQ":
             self.__tuberia = True
@@ -54,7 +56,7 @@ class Bloque:
 
         return False
 
-    def animate(self, forzar: bool = False):
+    def animar(self, forzar: bool = False):
         """Este método anima el bloque, sólo válido para plataformas
 
         @param forzar: es un bool para forzar la animación, es decir que empezará a animar a la plataforma
@@ -84,6 +86,16 @@ class Bloque:
             self.__animacion = 0
 
         self.__sprite = config.PLATAFORMA[self.__animacion]
+    
+    def golpear(self):
+        """Este método se encarga de golpear el bloque"""
+        
+        if not self.__golpeable: return
+        
+        self.animar(True)
+        
+        self.__golpeable = False
+        
 
     def __str__(self):
         return "(%i, %i, %s)" % (self.x, self.y, self.__pow)
@@ -122,3 +134,15 @@ class Bloque:
     def animacion(self) -> int:
         """Animación del bloque"""
         return self.__animacion
+
+    @property
+    def golpeable(self) -> bool:
+        """Si el bloque es golpeable"""
+        return self.__golpeable
+    
+    @golpeable.setter
+    def golpeable(self, golpeable: bool):
+        if type(golpeable) != bool:
+            raise ValueError("El valor de golpeable debe ser un booleano")
+        
+        self.__golpeable = golpeable

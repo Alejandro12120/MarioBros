@@ -101,7 +101,9 @@ class Mario:
             self.__velocidad_y = 0
             self.__velocidad_y += self.__gravedad
             
-            bloque_golpeado_superior.animate(True) # Forzamos la animación del bloque
+            if not bloque_golpeado_superior.golpeable: return
+            
+            bloque_golpeado_superior.golpear()
             
             if bloque_golpeado_superior.pow:
                 # Si el bloque es un pow, volteamos todos los enemigos

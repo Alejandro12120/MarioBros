@@ -58,8 +58,7 @@ class Tablero:
                 if pyxel.frame_count % 20 == 0:
                     enemigo.animar()
                     
-        # Animaciones de los bloques, y eliminación de los bloques pow
-        
+        # Todo lo relacionado con los bloques
         a_eliminar = []
         
         for bloque in self.fase.bloques.values():
@@ -70,7 +69,12 @@ class Tablero:
             
             if not bloque.tuberia and not bloque.pow:
                 # Animamos las plataformas para devolveras a su estado inicial ya que no la forzamos
-                bloque.animate()
+                bloque.animar()
+            
+            # Actualizamos los bloques no golpeables cada 0.5 segundos (30 fps * 0.5)
+            if pyxel.frame_count % 15 == 0:
+                if not bloque.golpeable:
+                    bloque.golpeable = True
         
         # Eliminamos los bloques pow
         for id in a_eliminar:
