@@ -59,11 +59,11 @@ class Tortuga(Enemigo):
         self.x += self.direccion * self.__aceleracion_x
 
         # Si se sale por la derecha, aparece por la izquierda
-        if self.direccion == 1 and self.x >= ancho:
+        if self.direccion == 1 and self.x + self.sprite[3] >= ancho:
             self.x = 0
         # Si se sale por la izquierda, aparece por la derecha
         elif self.direccion == -1 and self.x <= 0:
-            self.x = ancho
+            self.x = ancho - self.sprite[3]
 
         self.animar()
 

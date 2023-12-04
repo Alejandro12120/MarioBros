@@ -16,6 +16,9 @@ class Tablero:
 
         # Esta lista contendrá dos tuplas con coordenadas x e y de donde saldrán los enemigos
         self.__spawner_enemigos = [(16, 7), (self.ancho - 16 - 12, 7)]
+        
+        # Esta lista contendrá dos tuplas con coordenadas x e y de donde desaparecerán los enemigos
+        self.__despawn_enemigos = [(16, self.alto - 16), (self.ancho - 16 - 12, self.alto - 16)]
 
         # Nos creamos un booleano para dibujar las hitboxes de las plataformas
         self.__hitboxes = False
@@ -48,6 +51,10 @@ class Tablero:
             self.fase.spawnear_enemigo(self.__spawner_enemigos[random.randint(0, 1)])
         
         # Movimiento de los enemigos, y animaciones de los enemigos tumbados
+        # Despawn de los enemigos
+        
+        a_despawnear = []
+        
         for enemigo in self.fase.enemigos.values():
             # Llamamos al método específico de movimiento de cada enemigo
             enemigo.move(self.ancho, self.alto)
@@ -57,6 +64,13 @@ class Tablero:
                 # 20 frames son 0,6 segundos
                 if pyxel.frame_count % 20 == 0:
                     enemigo.animar()
+            
+            if enemigo.x < self.__despawn_enemigos[0][0] or enemigo.x > self.__despawn_enemigos[1][0]:
+                if enemigo.y == self.__despawn_enemigos[0][1] or enemigo.y == self.__despawn_enemigos[1][1]:
+                    a_despawnear.append(enemigo.id)
+        
+        for id in a_despawnear:
+            self.fase.despawnear_enemigo(id, True)
                     
         # Todo lo relacionado con los bloques
         a_eliminar = []
@@ -79,7 +93,6 @@ class Tablero:
         # Eliminamos los bloques pow
         for id in a_eliminar:
             del self.fase.bloques[id]
-        
 
     def draw(self):
         pyxel.cls(0)
