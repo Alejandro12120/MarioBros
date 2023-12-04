@@ -76,7 +76,7 @@ class Fase:
             self.bloques[plataforma.id] = plataforma
         
         # Bloque POW
-        pow = Bloque(96, 96, "POW")
+        pow = Bloque(96, 90, "POW")
         self.bloques[pow.id] = pow
 
         """Cargamos los enemigos"""
