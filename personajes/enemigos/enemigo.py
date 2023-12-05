@@ -29,14 +29,32 @@ class Enemigo:
 
         # Nos guardamos los bloques para poder comprobar si el enemigo está tocando el suelo
         self.__bloques = bloques
-        
+
         self.__hitbox = hitbox
+
+    def golpea(self, x: int, y: int) -> bool:
+        """Este método comprueba si un punto golpea al enemigo, es decir está dentro de la hitbox
+
+        @param x: es la posicion x del punto
+        @param y: es la posicion y del punto
+        @return: True si golpea, False si no
+        """
+        # Para ello hemos hecho un ajuste en función de la hitbox del enemigo
+        debug = """Coordenadas mario: %.2f, %.2f
+                    Hitbox enemigo x: %.2f %.2f
+                    Hitbox enemigo y: %.2f %.2f"""
+        #print(debug % (x,y, self.__x + self.__hitbox, self.__x + self.sprite[3] - self.__hitbox, self.__y, self.__y + self.sprite[4]))
+        if (self.__x + self.__hitbox <= x <= self.__x + self.sprite[3] - self.__hitbox
+                and self.__y <= y <= self.__y + self.sprite[4]):
+            return True
+
+        return False
 
     def animar(self):
         """Este método anima al enemigo"""
         # Actualizamos la animación
         self.animacion += 1
-        
+
         # Reiniciamos la animación si se ha pasado
         if self.animacion >= len(self.sprites):
             self.animacion = 0
@@ -57,14 +75,13 @@ class Enemigo:
         """
 
         return (
-            self.toca_borde(alto)
-            or self.obtener_bloque_golpeado(inferiormente=True) is not None
+                self.toca_borde(alto)
+                or self.obtener_bloque_golpeado(inferiormente=True) is not None
         )
-        
-    
+
     def toca_borde(self, alto: int) -> bool:
         """Este método comprueba si el enemigo está tocando el borde"""
-        
+
         alto_enemigo = self.sprite[4]
 
         if self.__y + alto_enemigo >= alto:
@@ -130,7 +147,7 @@ class Enemigo:
     def sprite(self):
         if self.__animacion >= len(self.__sprites):
             self.__animacion = 0
-        
+
         return self.__sprites[self.__animacion]
 
     @property

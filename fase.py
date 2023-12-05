@@ -1,11 +1,13 @@
 import random
 
+import config
 from personajes.mario import Mario
 from entidades.bloque import Bloque
 from personajes.enemigos.enemigo import Enemigo
 from personajes.enemigos.tipos.cangrejo import Cangrejo
 from personajes.enemigos.tipos.tortuga import Tortuga
 from personajes.enemigos.tipos.mosca import Mosca
+
 
 class Fase:
     def __init__(self, tablero):
@@ -15,9 +17,10 @@ class Fase:
 
         # Estos diccionarios actuará como visibilidad, es decir todo lo que estén en los diccionarios se dibujará
         # Además los ids de los objetos serán las claves de los diccionarios
-        self.__bloques: dict[int, Bloque]  = {}
-        self.__enemigos: dict[int, Enemigo]  = {}
-        self.__enemigos_de_la_fase: dict[int, Enemigo] =  {} # Este diccionario contendrá todos los enemigos que saldrán progresivamente
+        self.__bloques: dict[int, Bloque] = {}
+        self.__enemigos: dict[int, Enemigo] = {}
+        self.__enemigos_de_la_fase: dict[
+            int, Enemigo] = {}  # Este diccionario contendrá todos los enemigos que saldrán progresivamente
 
         self.__numero_fase: int = 1
         self.__mario: Mario = Mario(96, 107, self.__bloques, self.__enemigos, 1)
@@ -74,7 +77,7 @@ class Fase:
 
             plataforma = Bloque(i * 16, 96, "PLATAFORMA")
             self.bloques[plataforma.id] = plataforma
-        
+
         # Bloque POW
         pow = Bloque(96, 90, "POW")
         self.bloques[pow.id] = pow
@@ -85,20 +88,40 @@ class Fase:
         # Se generarán de forma aleatoria
         # Y se irán pasando a self.__enemigos para ser dibujados
 
-        # Generamos 30 enemigos
-        for i in range(30):
+        # Vamos a seguir un algoritmo de generación personalizado
+        # Para más información, mirar config.py
+
+        numero_enemigos = self.__numero_fase * config.MULTIPLICADOR_ENEMIGOS
+        spawnear_tortugas = numero_enemigos >= config.APARICION_TORTUGA
+        spawnear_cangrejos = numero_enemigos >= config.APARICION_CANGREJO
+        spawnear_moscas = numero_enemigos >= config.APARICION_MOSCAS
+
+        posibles_enemigos = []
+
+        for i in range(numero_enemigos):
+            # En cada iteracion tenemos que crear nuevos objetos de enemigos
+            # Para así poder spawnear enemigos con ids diferentes
+
+            posibles_enemigos.clear()
+
             # Les metemos una posición especial -1, -1, que indicará que se generen en el spawner
             # Le metemos una dirección 0, ya que dependerá del lado en el que se generen
             # Entonces cuando los generemos, les asignaremos una posición y una dirección
-            num = random.randint(0, 2)
-            if num == 0:
-                enemigo = Cangrejo(-1, -1, 0, self.bloques)
-            elif num == 1:
-                enemigo = Tortuga(-1, -1, 0, self.bloques)
-            else:
-                enemigo = Mosca(-1, -1, 0, self.bloques)
-            
+
+            if spawnear_tortugas:
+                posibles_enemigos.append(Tortuga(-1, -1, 0, self.bloques))
+
+            if spawnear_cangrejos:
+                posibles_enemigos.append(Cangrejo(-1, -1, 0, self.bloques))
+
+            if spawnear_moscas:
+                posibles_enemigos.append(Mosca(-1, -1, 0, self.bloques))
+
+            enemigo = random.choice(posibles_enemigos)
+
             self.__enemigos_de_la_fase[enemigo.id] = enemigo
+
+
 
     def spawnear_enemigo(self, spawner: tuple):
         """Este método se encargará de spawnear un enemigo de forma aleatoria"""
@@ -119,30 +142,30 @@ class Fase:
             enemigo.direccion = 1
         else:
             enemigo.direccion = -1
-            
+
         # Le asignamos la posición del spawner
         enemigo.x = spawner[0]
         enemigo.y = spawner[1]
-        
+
         # Lo metemos en el diccionario de enemigos
         self.__enemigos[enemigo.id] = enemigo
         # Lo eliminamos del diccionario de enemigos de la fase
         del enemigo
-    
+
     def despawnear_enemigo(self, id: int, respawn: bool = False):
         """Este método se encargará de despawnear un enemigo"""
-        
+
         # Si el enemigo no está spawneado, no hacemos nada
         if id not in self.__enemigos:
             return
-        
+
         enemigo = self.__enemigos[id]
-        
+
         if respawn:
             # Si queremos que el enemigo se vuelva a spawnear, lo metemos en el diccionario de enemigos de la fase
             self.__enemigos_de_la_fase[enemigo.id] = enemigo
-        
-        del self.__enemigos[id] # Lo despawneamos, es decir lo eliminamos del diccionario de enemigos
+
+        del self.__enemigos[id]  # Lo despawneamos, es decir lo eliminamos del diccionario de enemigos
 
     @property
     def bloques(self) -> dict[int, Bloque]:

@@ -16,7 +16,7 @@ class Tablero:
 
         # Esta lista contendrá dos tuplas con coordenadas x e y de donde saldrán los enemigos
         self.__spawner_enemigos = [(16, 7), (self.ancho - 16 - 12, 7)]
-        
+
         # Esta lista contendrá dos tuplas con coordenadas x e y de donde desaparecerán los enemigos
         self.__despawn_enemigos = [(16, self.alto - 16), (self.ancho - 16 - 12, self.alto - 16)]
 
@@ -30,7 +30,7 @@ class Tablero:
         # D o flecha derecha: Mover a Mario a la derecha
         # ESPACIO o flecha arriba: Hacer saltar a Mario
         # E: Mostrar las hitboxes
-        
+
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
         if pyxel.btn(pyxel.KEY_A) or pyxel.btn(pyxel.KEY_LEFT):
@@ -44,17 +44,17 @@ class Tablero:
 
         # Implementación de la gravedad
         self.fase.mario.move_y(self.alto, gravedad=True)
-        
+
         # Cada 4 segundos (30 fps * 4) se generará un enemigo
         # En el segundo 0 no se generará nada
         if pyxel.frame_count % 120 == 0 and pyxel.frame_count != 0:
             self.fase.spawnear_enemigo(self.__spawner_enemigos[random.randint(0, 1)])
-        
+
         # Movimiento de los enemigos, y animaciones de los enemigos tumbados
         # Despawn de los enemigos
-        
+
         a_despawnear = []
-        
+
         for enemigo in self.fase.enemigos.values():
             # Llamamos al método específico de movimiento de cada enemigo
             enemigo.move(self.ancho, self.alto)
@@ -64,35 +64,53 @@ class Tablero:
                 # 20 frames son 0,6 segundos
                 if pyxel.frame_count % 20 == 0:
                     enemigo.animar()
-            
+
             if enemigo.x < self.__despawn_enemigos[0][0] or enemigo.x > self.__despawn_enemigos[1][0]:
                 if enemigo.y == self.__despawn_enemigos[0][1] or enemigo.y == self.__despawn_enemigos[1][1]:
                     a_despawnear.append(enemigo.id)
-        
+
         for id in a_despawnear:
             self.fase.despawnear_enemigo(id, True)
-                    
+
         # Todo lo relacionado con los bloques
         a_eliminar = []
-        
+
         for bloque in self.fase.bloques.values():
             if bloque.pow and bloque.animacion == -1:
                 # Si el bloque pow ha terminado su animación, lo eliminamos de los bloques
                 a_eliminar.append(bloque.id)
                 continue
-            
+
             if not bloque.tuberia and not bloque.pow:
                 # Animamos las plataformas para devolveras a su estado inicial ya que no la forzamos
                 bloque.animar()
-            
+
             # Actualizamos los bloques no golpeables cada 0.5 segundos (30 fps * 0.5)
             if pyxel.frame_count % 15 == 0:
                 if not bloque.golpeable:
                     bloque.golpeable = True
-        
+
         # Eliminamos los bloques pow
         for id in a_eliminar:
             del self.fase.bloques[id]
+            
+        # Colisiones con los enemigos
+        for enemigo in self.fase.enemigos.values():
+            # Obtenemos x en función de la dirección
+            if self.fase.mario.direccion == 1:
+                # La x si vamos para la derecha será igual al ancho menos 1, por la hitbox
+                x_hitbox = self.fase.mario.x + self.fase.mario.sprite[3] - 1
+            else:
+                # La x si vamos para la izquierda será igual menos 1 por la hitbox
+                x_hitbox = self.fase.mario.x + 1
+
+            # Comprobamos si golpea con la cabeza
+            if enemigo.golpea(x_hitbox, self.fase.mario.y):
+                print("Golpea")
+
+            # Comprobamos si golpea con los pies
+            if enemigo.golpea(x_hitbox, self.fase.mario.y + self.fase.mario.sprite[4]):
+                print("Golpea")
 
     def draw(self):
         pyxel.cls(0)
@@ -111,11 +129,11 @@ class Tablero:
             )
 
         """Dibujamos la animación del texto de la fase"""
-        pyxel.text(96, 80, "FASE " + str(self.fase.numero_fase), 7)
+        pyxel.text(93, 80, "FASE " + str(self.fase.numero_fase), 7)
 
         if pyxel.frame_count > 120:  # 4 segundos (30 fps * 4)
             pyxel.text(
-                96, 80, "FASE " + str(self.fase.numero_fase), 0
+                93, 80, "FASE " + str(self.fase.numero_fase), 0
             )  # Lo pintamos de negro, para borrarlo
 
         """Dibujamos el numero de vidas"""
@@ -167,15 +185,16 @@ class Tablero:
             for bloque in self.fase.bloques.values():
                 if not bloque.tuberia and not bloque.pow:
                     pyxel.rectb(bloque.x, bloque.y + 5, 16, 5, 7)
-                
+
                 if bloque.pow:
                     pyxel.rectb(bloque.x, bloque.y, 16, bloque.sprite[4], 7)
-                
+
             """Hitboxes de los enemigos"""
             # Tenemos que hacer el mismo ajuste que con mario
             for enemigo in self.fase.enemigos.values():
                 # Las moscas tienen diferente hitbox
-                pyxel.rectb(enemigo.x + enemigo.hitbox, enemigo.y, enemigo.sprite[3] - enemigo.hitbox, enemigo.sprite[4], 7)
+                pyxel.rectb(enemigo.x + enemigo.hitbox, enemigo.y, enemigo.sprite[3] - enemigo.hitbox,
+                            enemigo.sprite[4], 7)
 
     def draw_hitboxes(self):
         self.__hitboxes = not self.__hitboxes

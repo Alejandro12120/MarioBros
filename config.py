@@ -7,6 +7,25 @@ las diferentes constantes
 ANCHO = 208
 ALTO = 128
 
+"""Vamos a utilizar un algoritmo de generación de enemigos
+personalizado. Se puede configurar con los siguientes parámetros:
+"""
+# Este parámetro multiplicado por el numero de ronda actual, dará lugar al
+# numero de enemigos que aparecerán durante la ronda.
+# Además si ese resultado es mayor o igual que los paramétros
+# de a continuación, aparecerá los distintos enemigos
+MULTIPLICADOR_ENEMIGOS = 4
+# Si el resultado es mayor o igual a este número, durante la ronda
+# podrán aparecer tortugas de forma aleatoria
+APARICION_TORTUGA = 4
+# Si el resultado es mayor o igual a este número, durante la ronda
+# podrán aparecer cangrejos de forma aleatoria
+APARICION_CANGREJO = 8
+# Si el resultado es mayor o igual a este número, durante la ronda
+# podrán aparecer moscas de forma aleatoria
+APARICION_MOSCAS = 12
+
+
 """
 Aquí vamos a definir los sprites
 Si el sprite es una lista, es que tiene animación
@@ -67,3 +86,4 @@ MOSCA_SPRITE = [(0, 0, 104, 16, 15),
 
 MOSCA_TUMBADA_SPRITE = [(0, 48, 104, 16, 15),
                         (0, 64, 104, 16, 15)]
+

@@ -1,5 +1,6 @@
 import config
 from entidades.bloque import Bloque
+from .enemigos.enemigo import Enemigo
 from typing import Optional
 
 
@@ -106,7 +107,7 @@ class Mario:
             bloque_golpeado_superior.golpear()
             
             if bloque_golpeado_superior.pow:
-                # Si el bloque es un pow, volteamos todos los enemigos
+                # Si el bloque es un pow, volteamos todos los enemigos que toquen suelo
                 for enemigo in self.__enemigos.values():
                     if enemigo.toca_suelo(alto):
                         if enemigo.tumbado:
@@ -179,6 +180,7 @@ class Mario:
                     return bloque
 
         return None
+
 
     def toca_suelo(self, alto: int) -> bool:
         """Este método comprueba si Mario toca el suelo
