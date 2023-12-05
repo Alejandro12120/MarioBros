@@ -218,3 +218,15 @@ class Mario:
     def direccion(self) -> int:
         """Dirección de Mario"""
         return self.__direccion
+    
+    @property
+    def godmode(self) -> bool:
+        """Godmode de Mario"""
+        return self.__godmode
+
+    @godmode.setter
+    def godmode(self, godmode: bool):
+        if type(godmode) != bool:
+            raise TypeError("El godmode debe ser un booleano")
+        
+        self.__godmode = godmode

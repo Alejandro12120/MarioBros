@@ -30,6 +30,7 @@ class Tablero:
         # D o flecha derecha: Mover a Mario a la derecha
         # ESPACIO o flecha arriba: Hacer saltar a Mario
         # E: Mostrar las hitboxes
+        # G: Activar godmode
 
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
@@ -41,6 +42,8 @@ class Tablero:
             self.fase.mario.saltar(self.alto)
         if pyxel.btnp(pyxel.KEY_E):
             self.draw_hitboxes()
+        if pyxel.btnp(pyxel.KEY_G):
+            self.fase.mario.godmode = not self.fase.mario.godmode
 
         # Implementación de la gravedad
         self.fase.mario.move_y(self.alto, gravedad=True)
@@ -94,28 +97,26 @@ class Tablero:
         for id in a_eliminar:
             del self.fase.bloques[id]
             
-        # Colisiones con los enemigos
-        for enemigo in self.fase.enemigos.values():
-            # Obtenemos x en función de la dirección
-            if self.fase.mario.direccion == 1:
-                # La x si vamos para la derecha será igual al ancho menos 1, por la hitbox
-                x_hitbox = self.fase.mario.x + self.fase.mario.sprite[3] - 1
-            else:
-                # La x si vamos para la izquierda será igual menos 1 por la hitbox
-                x_hitbox = self.fase.mario.x + 1
+        # Colisiones con los enemigos en caso de que mario no esté en godmode
+        if not self.fase.mario.godmode:
+            for enemigo in self.fase.enemigos.values():
+                # Obtenemos x en función de la dirección y con la corrección de hitbox
+                if self.fase.mario.direccion == 1:
+                    # La x si vamos para la derecha será igual al ancho menos 1, por la hitbox
+                    x_hitbox = self.fase.mario.x + self.fase.mario.sprite[3] - 1
+                else:
+                    # La x si vamos para la izquierda será igual menos 1 por la hitbox
+                    x_hitbox = self.fase.mario.x + 1
 
-            # Comprobamos si golpea con la cabeza
-            if enemigo.golpea(x_hitbox, self.fase.mario.y):
-                print("Golpea")
+                # Comprobamos si golpea con la cabeza o con los pies
+                if enemigo.golpea(x_hitbox, self.fase.mario.y) or enemigo.golpea(x_hitbox, self.fase.mario.y + self.fase.mario.sprite[4]):
+                    print("Golpea")
 
-            # Comprobamos si golpea con los pies
-            if enemigo.golpea(x_hitbox, self.fase.mario.y + self.fase.mario.sprite[4]):
-                print("Golpea")
 
     def draw(self):
         pyxel.cls(0)
 
-        # Dibujamos los bloques
+        """Dibujamos los bloques"""
         for bloque in self.fase.bloques.values():
             pyxel.blt(
                 bloque.x,
@@ -195,6 +196,10 @@ class Tablero:
                 # Las moscas tienen diferente hitbox
                 pyxel.rectb(enemigo.x + enemigo.hitbox, enemigo.y, enemigo.sprite[3] - enemigo.hitbox,
                             enemigo.sprite[4], 7)
+        
+        """Dibujamos el texto de godmode"""
+        if self.fase.mario.godmode:
+            pyxel.text(90, 34, "GODMODE", 3)
 
     def draw_hitboxes(self):
         self.__hitboxes = not self.__hitboxes
