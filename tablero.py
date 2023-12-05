@@ -47,7 +47,20 @@ class Tablero:
 
         # Implementación de la gravedad
         self.fase.mario.move_y(self.alto, gravedad=True)
-
+        
+        # Animaciones de la muerte de Mario
+        if self.fase.mario.animacion_muerto:
+            # Cada 15 segundos cambiamos el sprite
+            if pyxel.frame_count % 15 == 0:
+                self.fase.mario.animar(True)
+                
+            self.fase.mario.y += 3
+            
+            # Si Mario sale, del tablero, la animación termina
+            if self.fase.mario.y >= self.__alto:
+                self.fase.mario.terminar_animacion_muerte()
+                
+        
         # Cada 4 segundos (30 fps * 4) se generará un enemigo
         # En el segundo 0 no se generará nada
         if pyxel.frame_count % 120 == 0 and pyxel.frame_count != 0:
@@ -100,6 +113,9 @@ class Tablero:
         # Colisiones con los enemigos en caso de que mario no esté en godmode
         if not self.fase.mario.godmode:
             for enemigo in self.fase.enemigos.values():
+                # TODO: Patear enemigos tumbados
+                if enemigo.tumbado: continue
+                
                 # Obtenemos x en función de la dirección y con la corrección de hitbox
                 if self.fase.mario.direccion == 1:
                     # La x si vamos para la derecha será igual al ancho menos 1, por la hitbox
@@ -110,7 +126,7 @@ class Tablero:
 
                 # Comprobamos si golpea con la cabeza o con los pies
                 if enemigo.golpea(x_hitbox, self.fase.mario.y) or enemigo.golpea(x_hitbox, self.fase.mario.y + self.fase.mario.sprite[4]):
-                    print("Golpea")
+                    self.fase.mario.matar()
 
 
     def draw(self):

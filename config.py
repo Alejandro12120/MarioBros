@@ -54,11 +54,14 @@ POW = [(0, 0, 216, 16, 13),
 
 # Mario
 INICIAL_MARIO = (0, 240)
-# TODO: Animaciones de Mario
 MARIO_SPRITE = [(0, 0, 0, 16, 21),
                 (0, 16, 0, 16, 21),
                 (0, 32, 0, 16, 21),
                 (0, 48, 0, 16, 21)]
+MARIO_MUERTO_SPRITE = [(0, 0, 48, 16, 21),
+                       (0, 16, 48, 16, 21),
+                       (0, 32, 48, 16, 21),
+                       (0, 48, 48, 16, 21)]
 
 # Enemigo
 TORTUGA_SPRITE = [(0, 0, 72, 16, 16), 

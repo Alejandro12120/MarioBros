@@ -1,7 +1,7 @@
 import config
 from entidades.bloque import Bloque
 from .enemigos.enemigo import Enemigo
-from typing import Optional
+from typing import Optional, Union
 
 
 class Mario:
@@ -20,7 +20,7 @@ class Mario:
         self.__animacion = 0
 
         # Definimos el sprite de Mario
-        self.__sprite = config.MARIO_SPRITE[self.__animacion]
+        self.__sprites = config.MARIO_SPRITE
 
         # Definimos el numero de vidas de Mario
         self.__vidas = 3
@@ -37,6 +37,8 @@ class Mario:
         self.__velocidad_y = 0
 
         self.__gravedad = 0.4
+
+        self.__animacion_muerto = False
 
     def move_x(self, ancho: int, dir: int = 0):
         """Este método moverá a Mario horizontalmente
@@ -64,14 +66,8 @@ class Mario:
         # Guardamos la dirección
         self.__direccion = dir
 
-        # Cambiamos la animación
-        self.__animacion += 1
-        # Reiniciamos la animación si se ha pasado
-        if self.__animacion >= len(config.MARIO_SPRITE):
-            self.__animacion = 0
-
-        # Como hemos cambiado la animacion, actualizamos el sprite
-        self.__actualizar_sprite()
+        # Animamos a Mario
+        self.animar()
 
     def move_y(self, alto: int, gravedad: bool = True):
         """Este método moverá a Mario verticalmente
@@ -80,6 +76,9 @@ class Mario:
         @param gravedad: es un bool para saber si se aplica gravedad, por defecto True
         """
 
+        # Si es la animación, la controlamos desde tablero
+        if self.animacion_muerto: return
+        
         if gravedad and not self.toca_suelo(alto):
             self.__velocidad_y += self.__gravedad
 
@@ -93,19 +92,20 @@ class Mario:
 
             # Ajustamos su posición y
             if bloque_golpeado_inferior.pow:
-                self.__y = bloque_golpeado_inferior.y - self.__sprite[4]
+                self.__y = bloque_golpeado_inferior.y - self.sprite[4]
             else:
-                self.__y = bloque_golpeado_inferior.y + 5 - self.__sprite[4]
+                self.__y = bloque_golpeado_inferior.y + 5 - self.sprite[4]
 
         bloque_golpeado_superior = self.obtener_bloque_golpeado()
         if self.__velocidad_y < 0 and bloque_golpeado_superior is not None:
             self.__velocidad_y = 0
             self.__velocidad_y += self.__gravedad
-            
-            if not bloque_golpeado_superior.golpeable: return
-            
+
+            if not bloque_golpeado_superior.golpeable:
+                return
+
             bloque_golpeado_superior.golpear()
-            
+
             if bloque_golpeado_superior.pow:
                 # Si el bloque es un pow, volteamos todos los enemigos que toquen suelo
                 for enemigo in self.__enemigos.values():
@@ -122,22 +122,55 @@ class Mario:
             self.__y = 0
         elif self.__velocidad_y > 0 and self.toca_borde(alto):
             self.__velocidad_y = 0  # Reiniciamos la velocidad
-            self.__y = alto - self.__sprite[4]  # Cambiamos su posición y
+            self.__y = alto - self.sprite[4]  # Cambiamos su posición y
 
         self.__y += self.__velocidad_y
 
+    def animar(self, parar=False):
+        """Este método animar a mario
+
+        @param parar: debemos para en la última animación
+        """
+
+        # Cambiamos la animación
+        self.__animacion += 1
+        # Reiniciamos la animación si se ha pasado
+        if self.__animacion >= len(self.__sprites):
+            if parar:
+                self.__animacion = len(self.__sprites) - 1
+            else:
+                self.__animacion = 0
+
     def saltar(self, alto: int):
         """Este método hará saltar a Mario
-        
+
         @param alto: es el alto del tablero
         """
 
         self.__velocidad_y = -5
-        self.move_y(alto, False) 
+        self.move_y(alto, False)
 
-    def __actualizar_sprite(self):
-        """Este método actualizará el sprite de Mario"""
-        self.__sprite = config.MARIO_SPRITE[self.__animacion]
+    def matar(self):
+        """Este método matará a Mario, le restará una vida y lo pondrá en la posición inicial"""
+        # Para evitar matarlo varias veces seguidas
+        if self.__animacion_muerto: return
+        
+        self.__vidas -= 1
+        self.__sprites = config.MARIO_MUERTO_SPRITE
+        self.__animacion_muerto = True
+        
+        # Lo subimos un poco para dar una sensación de salto
+        self.__y -= 6
+    
+    def terminar_animacion_muerte(self):
+        """Este método termina la animación de muerte de Mario, devolviendolo al spawpoint y cambiando los sprites"""
+        
+        self.__sprites = config.MARIO_SPRITE
+        self.__animacion_muerto = False
+        
+        # Spawnpoint
+        self.__x = 96
+        self.__y = 107
 
     def toca_borde(self, alto: int) -> bool:
         """Este método comprueba si Mario toca el borde del tablero
@@ -145,7 +178,7 @@ class Mario:
         @param alto: es el alto del tablero
         @return: True si toca el borde, False si no
         """
-        alto_mario = self.__sprite[4]
+        alto_mario = self.sprite[4]
 
         if self.__y + alto_mario >= alto:
             return True
@@ -158,13 +191,13 @@ class Mario:
         @param inferiormente: es un bool para saber si se comprueba inferiormente, por defecto False
         @return: el bloque que golpea Mario, None si no golpea ningún bloque
         """
-        alto_mario = self.__sprite[4]
-        ancho_mario = self.__sprite[3]
+        alto_mario = self.sprite[4]
+        ancho_mario = self.sprite[3]
 
         for bloque in self.__bloques.values():
             if bloque.tuberia:
                 continue
-            
+
             # Hacemos el ajuste de +-1 explicado en el método tablero.draw()
             if inferiormente:
                 if bloque.golpea(self.__x + 1, self.__y + alto_mario):
@@ -180,7 +213,6 @@ class Mario:
                     return bloque
 
         return None
-
 
     def toca_suelo(self, alto: int) -> bool:
         """Este método comprueba si Mario toca el suelo
@@ -198,27 +230,32 @@ class Mario:
     def vidas(self) -> int:
         """Vidas de Mario"""
         return self.__vidas
-    
+
     @property
     def x(self) -> int:
         """Posición x de Mario"""
         return self.__x
-    
+
     @property
     def y(self) -> int:
         """Posición y de Mario"""
         return self.__y
-    
+
     @property
     def sprite(self) -> tuple:
         """Sprite de Mario"""
-        return self.__sprite
-    
+        return self.__sprites[self.__animacion]
+
     @property
     def direccion(self) -> int:
         """Dirección de Mario"""
         return self.__direccion
-    
+
+    @property
+    def animacion_muerto(self) -> bool:
+        """Está la animación de muerte de Mario activa"""
+        return self.__animacion_muerto
+
     @property
     def godmode(self) -> bool:
         """Godmode de Mario"""
@@ -228,5 +265,12 @@ class Mario:
     def godmode(self, godmode: bool):
         if type(godmode) != bool:
             raise TypeError("El godmode debe ser un booleano")
-        
+
         self.__godmode = godmode
+    
+    @y.setter
+    def y(self, y: Union[int, float]):
+        if type(y) != int and type(y) != float:
+            raise TypeError("La posicion y debe ser un int o un float")
+        
+        self.__y = y
