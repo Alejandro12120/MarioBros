@@ -37,7 +37,8 @@ class Mario:
         self.__velocidad_y = 0
 
         self.__gravedad = 0.4
-
+        
+        # Este atributo cambiará cuando se esté ejecutando la animación de muerte
         self.__animacion_muerto = False
 
     def move_x(self, ancho: int, dir: int = 0):

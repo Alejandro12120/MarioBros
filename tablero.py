@@ -18,7 +18,8 @@ class Tablero:
         self.__spawner_enemigos = [(16, 7), (self.ancho - 16 - 12, 7)]
 
         # Esta lista contendrá dos tuplas con coordenadas x e y de donde desaparecerán los enemigos
-        self.__despawn_enemigos = [(16, self.alto - 16), (self.ancho - 16 - 12, self.alto - 16)]
+        self.__despawn_enemigos = [
+            (16, self.alto - 16), (self.ancho - 16 - 12, self.alto - 16)]
 
         # Nos creamos un booleano para dibujar las hitboxes de las plataformas
         self.__hitboxes = False
@@ -47,24 +48,48 @@ class Tablero:
 
         # Implementación de la gravedad
         self.fase.mario.move_y(self.alto, gravedad=True)
-        
+
         # Animaciones de la muerte de Mario
         if self.fase.mario.animacion_muerto:
             # Cada 15 segundos cambiamos el sprite
             if pyxel.frame_count % 15 == 0:
                 self.fase.mario.animar(True)
-                
+
             self.fase.mario.y += 3
-            
+
             # Si Mario sale, del tablero, la animación termina
             if self.fase.mario.y >= self.__alto:
                 self.fase.mario.terminar_animacion_muerte()
-                
-        
+
+        a_despawnear = []
+
+        # Animaciones de la muerte de los enemigos
+        for enemigo in self.fase.enemigos.values():
+            if enemigo.animacion_muerto:
+                # Movemos al enemigo hacia los lados en función de la dirección del golpe
+                if enemigo.direccion_golpe == 1:
+                    enemigo.x += 3
+                else:
+                    enemigo.x -= 3
+
+                # enemigo.y += 1
+
+                # Si el enemigo sale del borde, finalmente es eliminado
+                if enemigo.x < 0 or enemigo.x > self.ancho:
+                    a_despawnear.append(enemigo.id)
+
+        for id in a_despawnear:
+            # 100 puntos por matar a un enemigo
+            self.__puntuacion += 100
+
+            # Eliminamos finalmente al enemigo
+            self.fase.despawnear_enemigo(id, False)
+
         # Cada 4 segundos (30 fps * 4) se generará un enemigo
         # En el segundo 0 no se generará nada
         if pyxel.frame_count % 120 == 0 and pyxel.frame_count != 0:
-            self.fase.spawnear_enemigo(self.__spawner_enemigos[random.randint(0, 1)])
+            self.fase.spawnear_enemigo(
+                self.__spawner_enemigos[random.randint(0, 1)])
 
         # Movimiento de los enemigos, y animaciones de los enemigos tumbados
         # Despawn de los enemigos
@@ -109,25 +134,32 @@ class Tablero:
         # Eliminamos los bloques pow
         for id in a_eliminar:
             del self.fase.bloques[id]
-            
+
         # Colisiones con los enemigos en caso de que mario no esté en godmode
         if not self.fase.mario.godmode:
             for enemigo in self.fase.enemigos.values():
-                # TODO: Patear enemigos tumbados
-                if enemigo.tumbado: continue
-                
                 # Obtenemos x en función de la dirección y con la corrección de hitbox
                 if self.fase.mario.direccion == 1:
                     # La x si vamos para la derecha será igual al ancho menos 1, por la hitbox
-                    x_hitbox = self.fase.mario.x + self.fase.mario.sprite[3] - 1
+                    x_hitbox = self.fase.mario.x + \
+                        self.fase.mario.sprite[3] - 1
                 else:
                     # La x si vamos para la izquierda será igual menos 1 por la hitbox
                     x_hitbox = self.fase.mario.x + 1
 
                 # Comprobamos si golpea con la cabeza o con los pies
                 if enemigo.golpea(x_hitbox, self.fase.mario.y) or enemigo.golpea(x_hitbox, self.fase.mario.y + self.fase.mario.sprite[4]):
-                    self.fase.mario.matar()
+                    # TODO: Patear enemigos tumbados
+                    if enemigo.tumbado:
+                        enemigo.matar(self.fase.mario.direccion)
+                    else:
+                        self.fase.mario.matar()
 
+        if len(self.fase.enemigos_de_la_fase) == 0 and len(self.fase.enemigos) == 0:
+            # Mil puntos por completar la fase
+            self.__puntuacion += 1000
+
+            self.__fase = Fase(self, self.fase.numero_fase + 1)
 
     def draw(self):
         pyxel.cls(0)
@@ -212,7 +244,7 @@ class Tablero:
                 # Las moscas tienen diferente hitbox
                 pyxel.rectb(enemigo.x + enemigo.hitbox, enemigo.y, enemigo.sprite[3] - enemigo.hitbox,
                             enemigo.sprite[4], 7)
-        
+
         """Dibujamos el texto de godmode"""
         if self.fase.mario.godmode:
             pyxel.text(90, 34, "GODMODE", 3)

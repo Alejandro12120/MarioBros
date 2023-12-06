@@ -10,7 +10,7 @@ from personajes.enemigos.tipos.mosca import Mosca
 
 
 class Fase:
-    def __init__(self, tablero):
+    def __init__(self, tablero, numero_fase: int = 1):
         """Esta clase será la encargada de gestionar la fase
         @param tablero: es el tablero en el que se dibujará la fase
         """
@@ -19,10 +19,9 @@ class Fase:
         # Además los ids de los objetos serán las claves de los diccionarios
         self.__bloques: dict[int, Bloque] = {}
         self.__enemigos: dict[int, Enemigo] = {}
-        self.__enemigos_de_la_fase: dict[
-            int, Enemigo] = {}  # Este diccionario contendrá todos los enemigos que saldrán progresivamente
+        self.__enemigos_de_la_fase: dict[int, Enemigo] = {}  # Este diccionario contendrá todos los enemigos que saldrán progresivamente
 
-        self.__numero_fase: int = 1
+        self.__numero_fase = numero_fase
         self.__mario: Mario = Mario(96, 107, self.__bloques, self.__enemigos, 1)
 
         self.__tablero = tablero
@@ -176,6 +175,11 @@ class Fase:
     def enemigos(self) -> dict[int, Enemigo]:
         """Lista de enemigos"""
         return self.__enemigos
+    
+    @property
+    def enemigos_de_la_fase(self) -> dict[int, Enemigo]:
+        """Lista de enemigos que aun no han salido"""
+        return self.__enemigos_de_la_fase
 
     @property
     def numero_fase(self) -> int:

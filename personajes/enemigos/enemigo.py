@@ -31,6 +31,9 @@ class Enemigo:
         self.__bloques = bloques
 
         self.__hitbox = hitbox
+        
+        self.__animacion_muerto = False
+        self.__direccion_golpe = 0
 
     def golpea(self, x: int, y: int) -> bool:
         """Este método comprueba si un punto golpea al enemigo, es decir está dentro de la hitbox
@@ -39,17 +42,11 @@ class Enemigo:
         @param y: es la posicion y del punto
         @return: True si golpea, False si no
         """
-        # Para ello hemos hecho un ajuste en función de la hitbox del enemigo
-        debug = """Coordenadas mario: %.2f, %.2f
-                    Hitbox enemigo x: %.2f %.2f
-                    Hitbox enemigo y: %.2f %.2f"""
-        #print(debug % (x,y, self.__x + self.__hitbox, self.__x + self.sprite[3] - self.__hitbox, self.__y, self.__y + self.sprite[4]))
         if (self.__x + self.__hitbox <= x <= self.__x + self.sprite[3] - self.__hitbox
                 and self.__y <= y <= self.__y + self.sprite[4]):
             return True
 
         return False
-
     def animar(self):
         """Este método anima al enemigo"""
         # Actualizamos la animación
@@ -66,6 +63,18 @@ class Enemigo:
     def levantar(self):
         """Este método levanta al enemigo"""
         self.__tumbado = False
+        
+    def matar(self, direccion: int):
+        """Este método mata al enemigo, para ello debe estar tumbado
+        
+        @param: es la dirección en la que se golpea al enemigo
+        """
+        
+        if not self.__tumbado or self.__animacion_muerto: return
+        
+        self.__animacion_muerto = True
+        self.__direccion_golpe = direccion
+        
 
     def toca_suelo(self, alto: int) -> bool:
         """Este método comprueba si Mario toca el suelo
@@ -153,6 +162,14 @@ class Enemigo:
     @property
     def animacion(self):
         return self.__animacion
+
+    @property
+    def animacion_muerto(self):
+        return self.__animacion_muerto
+    
+    @property
+    def direccion_golpe(self):
+        return self.__direccion_golpe
 
     @property
     def hitbox(self):
