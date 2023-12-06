@@ -64,24 +64,39 @@ MARIO_MUERTO_SPRITE = [(0, 0, 48, 16, 21),
                        (0, 48, 48, 16, 21)]
 
 # Enemigo
-TORTUGA_SPRITE = [(0, 0, 72, 16, 16), 
-                  (0, 16, 72, 16, 16), 
+TORTUGA_SPRITE = [(0, 0, 72, 16, 16),
+                  (0, 16, 72, 16, 16),
                   (0, 32, 72, 16, 16)]
 
-TORTUGA_TUMBADA_SPRITE = [(0, 48, 72, 16, 16), 
+TORTUGA_TUMBADA_SPRITE = [(0, 48, 72, 16, 16),
                           (0, 64, 72, 16, 16)]
 
-CANGREJO_SPRITE = [(0, 0, 136, 16, 16), 
-                   (0, 16, 136, 16, 16), 
+TORTUGA_COLOR_SPRITE = [(0, 80, 72, 16, 16)]
+
+TORTUGA_COLOR_TUMBADA_SPRITE = [(0, 80, 72, 16, 16)]
+
+CANGREJO_SPRITE = [(0, 0, 136, 16, 16),
+                   (0, 16, 136, 16, 16),
                    (0, 32, 136, 16, 16)]
 
 CANGREJO_ENFADADO_SPRITE = [(0, 64, 136, 16, 16),
                             (0, 80, 136, 16, 16),
                             (0, 96, 136, 16, 16)]
-    
 
-CANGREJO_TUMBADO_SPRITE = [(0, 112, 136, 16, 16), 
+CANGREJO_TUMBADO_SPRITE = [(0, 112, 136, 16, 16),
                            (0, 128, 136, 16, 16)]
+
+CANGREJO_COLOR_SPRITE = [(0, 0, 152, 16, 16),
+                         (0, 16, 152, 16, 16),
+                         (0, 32, 152, 16, 16)]
+
+CANGREJO_COLOR_ENFADADO_SPRITE = [(0, 64, 152, 16, 16),
+                                  (0, 80, 152, 16, 16),
+                                  (0, 96, 152, 16, 16)]
+
+CANGREJO_COLOR_TUMBADO_SPRITE = [(0, 112, 152, 16, 16),
+                                 (0, 128, 152, 16, 16)]
+
 
 MOSCA_SPRITE = [(0, 0, 104, 16, 15),
                 (0, 16, 104, 16, 15),
@@ -90,3 +105,9 @@ MOSCA_SPRITE = [(0, 0, 104, 16, 15),
 MOSCA_TUMBADA_SPRITE = [(0, 48, 104, 16, 15),
                         (0, 64, 104, 16, 15)]
 
+MOSCA_COLOR_SPRITE = [(0, 0, 120, 16, 15),
+                      (0, 16, 120, 16, 15),
+                      (0, 32, 120, 16, 15)]
+
+MOSCA_COLOR_TUMBADA_SPRITE = [(0, 48, 120, 16, 15),
+                              (0, 64, 120, 16, 15)]

@@ -40,14 +40,14 @@ class Tablero:
         if pyxel.btn(pyxel.KEY_D) or pyxel.btn(pyxel.KEY_RIGHT):
             self.fase.mario.move_x(self.ancho, 1)
         if (pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.KEY_UP)) and self.fase.mario.toca_suelo(self.alto):
-            self.fase.mario.saltar(self.alto)
+            self.fase.mario.saltar(self.alto, pyxel.frame_count)
         if pyxel.btnp(pyxel.KEY_E):
             self.draw_hitboxes()
         if pyxel.btnp(pyxel.KEY_G):
             self.fase.mario.godmode = not self.fase.mario.godmode
 
         # Implementación de la gravedad
-        self.fase.mario.move_y(self.alto, gravedad=True)
+        self.fase.mario.move_y(self.alto, pyxel.frame_count, gravedad=True)
 
         # Animaciones de la muerte de Mario
         if self.fase.mario.animacion_muerto:
@@ -93,6 +93,7 @@ class Tablero:
 
         # Movimiento de los enemigos, y animaciones de los enemigos tumbados
         # Despawn de los enemigos
+        # Levantamiento automático de los enemigos
 
         a_despawnear = []
 
@@ -105,6 +106,13 @@ class Tablero:
                 # 20 frames son 0,6 segundos
                 if pyxel.frame_count % 20 == 0:
                     enemigo.animar()
+                
+                # Si han pasado 10 segundos desde que se tumbó, se levanta y cambia color
+                # 300 frames son 10 segundos (30 fps * 10 segundos)
+                if enemigo.frames_tumbado + 300 == pyxel.frame_count:
+                    enemigo.levantar()
+                    enemigo.cambiar_color()
+                
 
             if enemigo.x < self.__despawn_enemigos[0][0] or enemigo.x > self.__despawn_enemigos[1][0]:
                 if enemigo.y == self.__despawn_enemigos[0][1] or enemigo.y == self.__despawn_enemigos[1][1]:
@@ -155,6 +163,7 @@ class Tablero:
                     else:
                         self.fase.mario.matar()
 
+        # Fin de la fase/nivel
         if len(self.fase.enemigos_de_la_fase) == 0 and len(self.fase.enemigos) == 0:
             # Mil puntos por completar la fase
             self.__puntuacion += 1000
@@ -222,13 +231,16 @@ class Tablero:
             # Tenemos que hacer un ajuste de +-1 para que mario pueda pasar por los huecos
             # Porque como el ancho de mario es 16, y justo los huecos son de 16, era muy dificil que pasase
             # Entonces con un ajuste de +-1 en la x, mario puede pasar por los huecos
-            pyxel.rectb(
-                self.fase.mario.x + 1,
-                self.fase.mario.y,
-                self.fase.mario.sprite[3] - 1,
-                self.fase.mario.sprite[4],
-                7,
-            )
+
+            # Si mario está en godmode no tiene hitbox, o si está con la animación de muerte
+            if not self.fase.mario.godmode and not self.fase.mario.animacion_muerto:
+                pyxel.rectb(
+                    self.fase.mario.x + 1,
+                    self.fase.mario.y,
+                    self.fase.mario.sprite[3] - 1,
+                    self.fase.mario.sprite[4],
+                    7,
+                )
 
             """Hitboxes de los bloques"""
             for bloque in self.fase.bloques.values():
@@ -239,10 +251,11 @@ class Tablero:
                     pyxel.rectb(bloque.x, bloque.y, 16, bloque.sprite[4], 7)
 
             """Hitboxes de los enemigos"""
-            # Tenemos que hacer el mismo ajuste que con mario
+            # Tenemos que hacer el mismo ajuste que con mario, aunque depende del enemigo
             for enemigo in self.fase.enemigos.values():
-                # Las moscas tienen diferente hitbox
-                pyxel.rectb(enemigo.x + enemigo.hitbox, enemigo.y, enemigo.sprite[3] - enemigo.hitbox,
+                # Si el enemigo está con la animación de muerte no tiene hitbox
+                if not enemigo.animacion_muerto:
+                    pyxel.rectb(enemigo.x + enemigo.hitbox, enemigo.y, enemigo.sprite[3] - enemigo.hitbox,
                             enemigo.sprite[4], 7)
 
         """Dibujamos el texto de godmode"""

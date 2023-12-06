@@ -26,6 +26,10 @@ class Enemigo:
         self.__sprites = sprites
 
         self.__animacion = 0
+        
+        # Almacenamos un atributo para saber los frames que había cuando fue tumbada
+        # Para así poder hacer cálculos con el tiempo, y que se levante cuando pase x tiempo
+        self.__frames_tumbado = 0
 
         # Nos guardamos los bloques para poder comprobar si el enemigo está tocando el suelo
         self.__bloques = bloques
@@ -56,10 +60,12 @@ class Enemigo:
         if self.animacion >= len(self.sprites):
             self.animacion = 0
 
-    def tumbar(self):
+    def tumbar(self, frames_actuales: int):
         """Este método tumba al enemigo"""
         self.__tumbado = True
-
+        
+        self.__frames_tumbado = frames_actuales
+        
     def levantar(self):
         """Este método levanta al enemigo"""
         self.__tumbado = False
@@ -174,6 +180,17 @@ class Enemigo:
     @property
     def hitbox(self):
         return self.__hitbox
+    
+    @property
+    def frames_tumbado(self):
+        return self.__frames_tumbado
+    
+    @frames_tumbado.setter
+    def frames_tumbado(self, frames: int):
+        if type(frames) != int:
+            raise TypeError("El atributo frames_tumbado debe ser un int")
+        
+        self.__frames_tumbado = frames
 
     # Creamos un setter para los sprites ya que los cambiaremos cuando se tumben a los enemigos
     @sprites.setter

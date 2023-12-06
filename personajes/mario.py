@@ -70,7 +70,7 @@ class Mario:
         # Animamos a Mario
         self.animar()
 
-    def move_y(self, alto: int, gravedad: bool = True):
+    def move_y(self, alto: int, frames: int, gravedad: bool = True):
         """Este método moverá a Mario verticalmente
 
         @param alto: es el alto del tablero
@@ -114,7 +114,7 @@ class Mario:
                         if enemigo.tumbado:
                             enemigo.levantar()
                         else:
-                            enemigo.tumbar()
+                            enemigo.tumbar(frames)
 
         # No puede salirse ni por arriba ni por abajo
         # Si la velocidad es negativa significa que va hacia arriba
@@ -142,14 +142,14 @@ class Mario:
             else:
                 self.__animacion = 0
 
-    def saltar(self, alto: int):
+    def saltar(self, alto: int, frames: int):
         """Este método hará saltar a Mario
 
         @param alto: es el alto del tablero
         """
 
         self.__velocidad_y = -5
-        self.move_y(alto, False)
+        self.move_y(alto, frames, False)
 
     def matar(self):
         """Este método matará a Mario, le restará una vida y lo pondrá en la posición inicial"""

@@ -24,8 +24,8 @@ class Mosca(Enemigo):
         # Almacenamos el numero maximo de golpes que puede recibir
         self.__golpes_maximo = 1
 
-        # Almacenamos una variable para saber si la mosca está enfadada
-        self.__enfadado = False
+        # Almacenamos un atributo para saber si la mosca ha cambiado color
+        self.__color = False
 
         # Aceleracon en el eje x
         self.__aceleracion_x = 1
@@ -122,13 +122,29 @@ class Mosca(Enemigo):
         self.__golpes_recibidos += 1
         # Comprobamos si ha sido tumbada
         self.comprobar_si_ha_sido_tumbado()
+    
+    def cambiar_color(self):
+        """Este método cambia el color a la mosca"""
+        
+        self.sprites = config.MOSCA_COLOR_SPRITE
+        
+        self.__color = True
+        
+        # Hacemos que el enemigo se mueva más rápido
+        self.__aceleracion_x = 1.5
 
-    def tumbar(self):
-        """Este método, tumba a la mosca, hacemos un override para cambiar el sprite"""
-        super().tumbar()
+    def tumbar(self, frames_actuales: int):
+        """Este método, tumba a la mosca, hacemos un override para cambiar el sprite
+        
+        @param frames_actuales: son los frames actuales del juego
+        """
+        super().tumbar(frames_actuales)
 
         # Cambiamos los sprites
-        self.sprites = config.MOSCA_TUMBADA_SPRITE
+        if self.__color:
+            self.sprites = config.MOSCA_COLOR_TUMBADA_SPRITE
+        else:
+            self.sprites = config.MOSCA_TUMBADA_SPRITE
 
     def levantar(self):
         """Este método levanta a la mosca, hacemos un override para reiniciar al enemigo"""
@@ -138,4 +154,19 @@ class Mosca(Enemigo):
         self.__golpes_recibidos = 0
 
         # Cambiamos los sprites
-        self.sprites = config.MOSCA_SPRITE
+        if self.__color:
+            self.sprites = config.MOSCA_COLOR_SPRITE
+        else:
+            self.sprites = config.MOSCA_SPRITE
+    
+    @property
+    def color(self) -> bool:
+        """Devuelve si la mosca ha cambiado de color"""
+        return self.__color
+    
+    @color.setter
+    def color(self, color: bool):
+        if type(color) != bool:
+            raise TypeError("El color debe ser un booleano")
+        
+        self.__color = color

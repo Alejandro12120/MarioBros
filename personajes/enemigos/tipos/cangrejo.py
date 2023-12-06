@@ -22,8 +22,10 @@ class Cangrejo(Enemigo):
         # Almacenamos el número máximo de golpes que puede recibir
         self.__golpes_maximo = 2
 
-        # Almacenamos una variable para saber si el cangrejo está enfadado
+        # Almacenamos un atributo para saber si el cangrejo está enfadado
         self.__enfadado = False
+        # Almacenamos un atributo para saber si el cangrejo ha cambiado color
+        self.__color = False
 
         # Aceleración en el eje x
         self.__aceleracion_x = 0.7
@@ -102,7 +104,7 @@ class Cangrejo(Enemigo):
     
     def comprobar_si_ha_sido_tumbado(self):
         """Este método comprueba si el cangrejo ha sido tumbado"""
-        if self.__golpes_recibidos >= self.__golpes_maximo:
+        if self.__golpes_recibidos >= self.__golpes_maximo and self.__enfadado:
             self.tumbar()
         else:
             # Si no ha sido tumbada, se enfada
@@ -113,13 +115,29 @@ class Cangrejo(Enemigo):
         self.__golpes_recibidos += 1
         # Comprobamos si ha sido tumbada
         self.comprobar_si_ha_sido_tumbado()
+    
+    def cambiar_color(self):
+        """Este método cambia el color del cangrejo"""
+        
+        self.sprites = config.CANGREJO_COLOR_SPRITE
+        
+        self.__color = True
+        
+        # Hacemos que el enemigo se mueva más rápido
+        self.__aceleracion_x = 1.5
 
-    def tumbar(self):
-        """Este método, tumba al cangrejo, hacemos un override para cambiar el sprite"""
-        super().tumbar()
+    def tumbar(self, frames_actuales: int):
+        """Este método, tumba al cangrejo, hacemos un override para cambiar el sprite
+        
+        @param frames_actuales: son los frames actuales del juego
+        """
+        super().tumbar(frames_actuales)
 
         # Cambiamos los sprites
-        self.sprites = config.CANGREJO_TUMBADO_SPRITE
+        if self.__color:
+            self.sprites = config.CANGREJO_COLOR_TUMBADO_SPRITE
+        else:
+            self.sprites = config.CANGREJO_TUMBADO_SPRITE
 
     def levantar(self):
         """Este método levanta al cangrejo, hacemos un override para reiniciar al enemigo"""
@@ -129,11 +147,30 @@ class Cangrejo(Enemigo):
         self.__golpes_recibidos = 0
 
         # Cambiamos los sprites
-        self.sprites = config.CANGREJO_SPRITE
+        if self.__color:
+            self.sprites = config.CANGREJO_COLOR_SPRITE
+        else:
+            self.sprites = config.CANGREJO_SPRITE
+            
 
     def enfadarse(self):
         """Este método hace que el cangrejo se enfade"""
         self.__enfadado = True
 
         # Cambiamos los sprites
-        self.sprites = config.CANGREJO_ENFADADO_SPRITE
+        if self.__color:
+            self.sprites = config.CANGREJO_COLOR_ENFADADO_SPRITE
+        else:
+            self.sprites = config.CANGREJO_ENFADADO_SPRITE
+    
+    @property
+    def color(self) -> bool:
+        """Devuelve si la mosca ha cambiado de color"""
+        return self.__color
+    
+    @color.setter
+    def color(self, color: bool):
+        if type(color) != bool:
+            raise TypeError("El color debe ser un booleano")
+        
+        self.__color = color
