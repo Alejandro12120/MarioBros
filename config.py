@@ -37,6 +37,7 @@ Los sprites se almacenan en tuplas de 5 elementos
     - Alto
 Los personajes están en el banco 0
 Los bloques están en el banco 1
+Los elementos de la pantalla inicial están en el banco 2
 """
 
 # Elementos de la pantalla inicial
@@ -44,6 +45,12 @@ TECLAS_AD = (2, 0, 0, 21, 16)
 FLECHAS = (2, 0, 16, 21, 16)
 ESPACIO = (2, 0, 32, 41, 16)
 ESPACIO_SOLO = (2, 0, 32, 24, 16)
+
+# Monedas
+MONEDA_SPRITE = [(0, 0, 184, 7, 11), 
+                 (0, 8, 184, 8, 11),
+                 (0, 16, 184, 8, 11),
+                 (0, 24, 184, 7, 11)]
 
 # Bloques, los bloques están en el banco 1
 TUBERIA_DERECHA = (1, 0, 0, 16, 16)  # ampliable en ancho hasta 32
