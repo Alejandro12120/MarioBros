@@ -71,9 +71,12 @@ TORTUGA_SPRITE = [(0, 0, 72, 16, 16),
 TORTUGA_TUMBADA_SPRITE = [(0, 48, 72, 16, 16),
                           (0, 64, 72, 16, 16)]
 
-TORTUGA_COLOR_SPRITE = [(0, 80, 72, 16, 16)]
+TORTUGA_COLOR_SPRITE = [(0, 80, 72, 16, 16),
+                        (0, 96, 72, 16, 16),
+                        (0, 112, 72, 16, 16)]
 
-TORTUGA_COLOR_TUMBADA_SPRITE = [(0, 80, 72, 16, 16)]
+TORTUGA_COLOR_TUMBADA_SPRITE = [(0, 128, 72, 16, 16),
+                                (0, 144, 72, 16, 16)]
 
 CANGREJO_SPRITE = [(0, 0, 136, 16, 16),
                    (0, 16, 136, 16, 16),
