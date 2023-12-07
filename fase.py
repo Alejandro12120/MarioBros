@@ -3,6 +3,7 @@ import random
 import config
 from personajes.mario import Mario
 from entidades.bloque import Bloque
+from entidades.moneda import Moneda
 from personajes.enemigos.enemigo import Enemigo
 from personajes.enemigos.tipos.cangrejo import Cangrejo
 from personajes.enemigos.tipos.tortuga import Tortuga
@@ -20,6 +21,7 @@ class Fase:
         self.__bloques: dict[int, Bloque] = {}
         self.__enemigos: dict[int, Enemigo] = {}
         self.__enemigos_de_la_fase: dict[int, Enemigo] = {}  # Este diccionario contendrá todos los enemigos que saldrán progresivamente
+        self.__monedas: dict[int, Moneda] = {}
 
         self.__numero_fase = numero_fase
         self.__mario: Mario = Mario(80, 107, self.__bloques, self.__enemigos, 1)
@@ -139,7 +141,10 @@ class Fase:
 
 
     def spawnear_enemigo(self, spawner: tuple):
-        """Este método se encargará de spawnear un enemigo de forma aleatoria"""
+        """Este método se encargará de spawnear un enemigo de forma aleatoria
+        
+        @param spawner: es la posición del spawner
+        """
 
         # Si no quedan enemigos, no hacemos nada
         if len(self.__enemigos_de_la_fase) == 0:
@@ -168,7 +173,11 @@ class Fase:
         del enemigo
 
     def despawnear_enemigo(self, id: int, respawn: bool = False):
-        """Este método se encargará de despawnear un enemigo"""
+        """Este método se encargará de despawnear un enemigo
+        
+        @param id: es el id del enemigo
+        @param respawn: si queremos que el enemigo se vuelva a spawnear
+        """
 
         # Si el enemigo no está spawneado, no hacemos nada
         if id not in self.__enemigos:
@@ -181,6 +190,24 @@ class Fase:
             self.__enemigos_de_la_fase[enemigo.id] = enemigo
 
         del self.__enemigos[id]  # Lo despawneamos, es decir lo eliminamos del diccionario de enemigos
+    
+    def spawnear_moneda(self, spawner: tuple):
+        """Este método spawnea una moneda nueva
+        
+        @param spawner: es la posición del spawner
+        """
+        
+        if spawner[0] == 16:
+            direccion = 1
+        else:
+            direccion = -1
+        
+        # Creamos la moneda    
+        moneda = Moneda(spawner[0], spawner[1], direccion, self.bloques)
+        
+        # La metemos en el diccionario de monedas
+        self.__monedas[moneda.id] = moneda
+        
 
     @property
     def bloques(self) -> dict[int, Bloque]:
@@ -196,6 +223,11 @@ class Fase:
     def enemigos_de_la_fase(self) -> dict[int, Enemigo]:
         """Lista de enemigos que aun no han salido"""
         return self.__enemigos_de_la_fase
+
+    @property
+    def monedas(self) -> dict[int, Moneda]:
+        """Lista de monedas"""
+        return self.__monedas
 
     @property
     def numero_fase(self) -> int:

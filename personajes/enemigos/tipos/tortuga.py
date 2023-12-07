@@ -1,9 +1,10 @@
 from ..enemigo import Enemigo
+from entidades.bloque import Bloque
 import config
 
 
 class Tortuga(Enemigo):
-    def __init__(self, x: int, y: int, dir: int, bloques: dict):
+    def __init__(self, x: int, y: int, dir: int, bloques: dict[Bloque]):
         """Este método creará una tortuga
         Características: se mueve como mario, necesita un golpe para darle la vuelta
 

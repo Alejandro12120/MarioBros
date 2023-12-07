@@ -52,6 +52,10 @@ MONEDA_SPRITE = [(0, 0, 184, 7, 11),
                  (0, 16, 184, 8, 11),
                  (0, 24, 184, 7, 11)]
 
+MONEDA_BRILLO_SPRITE = [(0, 32, 184, 16, 16),
+                        (0, 48, 184, 16, 16),
+                        (0, 128, 0, 16, 16)]
+
 # Bloques, los bloques están en el banco 1
 TUBERIA_DERECHA = (1, 0, 0, 16, 16)  # ampliable en ancho hasta 32
 TUBERIA_IZQUIERDA = (1, 16, 16, 16, 16)  # ampliable en ancho hasta 32

@@ -51,6 +51,7 @@ class Enemigo:
             return True
 
         return False
+    
     def animar(self):
         """Este método anima al enemigo"""
         # Actualizamos la animación
@@ -83,7 +84,7 @@ class Enemigo:
         
 
     def toca_suelo(self, alto: int) -> bool:
-        """Este método comprueba si Mario toca el suelo
+        """Este método comprueba si el enemigo toca el suelo
 
         @param alto: es el alto del tablero
         @return: True si toca el suelo, False si no

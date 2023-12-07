@@ -1,9 +1,10 @@
 from ..enemigo import Enemigo
 import config
+from entidades.bloque import Bloque
 
 
 class Cangrejo(Enemigo):
-    def __init__(self, x: int, y: int, dir: int, bloques: dict):
+    def __init__(self, x: int, y: int, dir: int, bloques: dict[Bloque]):
         """Este método creará un cangrejo
         Características: se mueve como mario, necesita un golpe para darle la vuelta
 

@@ -5,7 +5,7 @@ import config
 
 
 class Mosca(Enemigo):
-    def __init__(self, x: int, y: int, dir: int, bloques: dict):
+    def __init__(self, x: int, y: int, dir: int, bloques: dict[Bloque]):
         """Este método creará una mosca,
         Características: se mueven saltando, para golpearlos tienen que tocar la plataforma
 
