@@ -21,7 +21,7 @@ class Tablero:
         self.__despawn_enemigos = [
             (16, self.alto - 16), (self.ancho - 16 - 12, self.alto - 16)]
 
-        # Nos creamos un booleano para dibujar las hitboxes de las plataformas
+        # Nos creamos un booleano para dibujar las hitboxes
         self.__hitboxes = False
 
     def update(self):

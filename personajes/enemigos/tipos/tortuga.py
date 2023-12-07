@@ -40,10 +40,10 @@ class Tortuga(Enemigo):
         @param alto: es el alto del tablero
         """
         
-        # Si es una animación, la controlamos desde tablero
-        if self.animacion_muerto: return
-        
-        self.move_x(ancho)
+        # Aunque sea una animación y la controlemos desde tablero
+        # Queremos que la animación tenga gravedad
+        if not self.animacion_muerto:
+            self.move_x(ancho)
         
         # Implementamos la gravedad
         self.move_y(alto)

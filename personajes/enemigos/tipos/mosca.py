@@ -34,13 +34,15 @@ class Mosca(Enemigo):
         self.__gravedad = 0.1
 
     def move(self, ancho: int, alto: int):
-        # Si es una animación, la controlamos desde tablero
-        if self.animacion_muerto: return
+        # Aunque sea una animación y la controlemos desde tablero
+        # Queremos que la animación tenga gravedad
+        if not self.animacion_muerto:
+            self.move_x(ancho)
         
-        self.move_x(ancho)
+            if self.toca_suelo(alto):
+                self.saltar(alto)
         
-        if self.toca_suelo(alto):
-            self.saltar(alto)
+        
         
         # Implementamos la gravedad
         self.move_y(alto)
