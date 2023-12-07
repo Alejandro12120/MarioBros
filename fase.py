@@ -22,13 +22,13 @@ class Fase:
         self.__enemigos_de_la_fase: dict[int, Enemigo] = {}  # Este diccionario contendrá todos los enemigos que saldrán progresivamente
 
         self.__numero_fase = numero_fase
-        self.__mario: Mario = Mario(96, 107, self.__bloques, self.__enemigos, 1)
+        self.__mario: Mario = Mario(80, 107, self.__bloques, self.__enemigos, 1)
 
         self.__tablero = tablero
 
-        self.__iniciar_fase()
+        # self.__iniciar_fase()
 
-    def __iniciar_fase(self):
+    def iniciar_fase(self):
         """Cargamos los bloques"""
 
         # Tuberías
@@ -120,6 +120,22 @@ class Fase:
 
             self.__enemigos_de_la_fase[enemigo.id] = enemigo
 
+    def terminar_fase(self, completada: bool = False):
+        """Este método se encargará de terminar la fase
+        
+        @param completada: si la fase ha sido completada
+        """
+        
+        # Eliminamos todos los enemigos
+        self.__enemigos.clear()
+        self.__enemigos_de_la_fase.clear()
+
+        # Eliminamos todos los bloques
+        self.__bloques.clear()
+
+        # Eliminamos a Mario, si la fase no ha sido completada
+        if not completada:
+            del self.__mario
 
 
     def spawnear_enemigo(self, spawner: tuple):

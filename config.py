@@ -39,6 +39,12 @@ Los personajes están en el banco 0
 Los bloques están en el banco 1
 """
 
+# Elementos de la pantalla inicial
+TECLAS_AD = (2, 0, 0, 21, 16)
+FLECHAS = (2, 0, 16, 21, 16)
+ESPACIO = (2, 0, 32, 41, 16)
+ESPACIO_SOLO = (2, 0, 32, 24, 16)
+
 # Bloques, los bloques están en el banco 1
 TUBERIA_DERECHA = (1, 0, 0, 16, 16)  # ampliable en ancho hasta 32
 TUBERIA_IZQUIERDA = (1, 16, 16, 16, 16)  # ampliable en ancho hasta 32

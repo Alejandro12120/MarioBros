@@ -1,6 +1,7 @@
 from fase import Fase
 import pyxel
 import random
+import config
 
 
 class Tablero:
@@ -22,19 +23,12 @@ class Tablero:
 
         # Nos creamos un booleano para dibujar las hitboxes
         self.__hitboxes = False
-        
+
         # Nos creamos una variable para saber si el juego ha terminado
         self.__fin_juego = False
-    
-    def fin_juego(self):
-        """Este método termina el juego, mostrando la puntuación final"""
-        
-        self.__fin_juego = True
-        
-        pyxel.cls(0)
-        pyxel.text(70, 26, "FIN DE LA PARTIDA", 8)
-        pyxel.text(90, 46, str(self.__puntuacion) + " puntos", 10)
-        pyxel.text(5, 120, "Pulsa Q para salir", 14)
+
+        # Nos creamos una variable para controlar si estamos en la pantalla de inicio
+        self.__inicio_juego = True
 
     def update(self):
         # Controles:
@@ -47,10 +41,19 @@ class Tablero:
 
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
-            
+
+        if pyxel.btnp(key=pyxel.KEY_SPACE) and self.__inicio_juego:
+            # Iniciamos la fase
+            self.__fase.iniciar_fase()
+
+            # Quitamos la pantalla de inicio
+            self.__inicio_juego = False
+
         # Si el juego ha terminado solo nos interesa la Q para salir
-        if self.__fin_juego: return
-        
+        # Si el juego aun no ha empezado, solo nos interesa el espacio para empezar
+        if self.__fin_juego or self.__inicio_juego:
+            return
+
         # Si estamos en la animación de muerte de Mario, no podemos hacer nada
         if not self.fase.mario.animacion_muerto:
             if pyxel.btn(pyxel.KEY_A) or pyxel.btn(pyxel.KEY_LEFT):
@@ -125,18 +128,18 @@ class Tablero:
                 # 20 frames son 0,6 segundos
                 if pyxel.frame_count % 20 == 0:
                     enemigo.animar()
-                
+
                 # Si han pasado 10 segundos desde que se tumbó, se levanta y cambia color
                 # 300 frames son 10 segundos (30 fps * 10 segundos)
                 if enemigo.frames_tumbado + 300 == pyxel.frame_count:
                     enemigo.levantar()
                     enemigo.cambiar_color()
-                
+
             # Despawn de los enemigos
             if enemigo.x < self.__despawn_enemigos[0][0] or enemigo.x > self.__despawn_enemigos[1][0]:
                 if enemigo.y == self.__despawn_enemigos[0][1] or enemigo.y == self.__despawn_enemigos[1][1]:
                     a_despawnear.append(enemigo.id)
-            
+
             # Colisiones con mario, en caso de que no esté en godmode
             if not self.fase.mario.godmode:
                 # Obtenemos x en función de la dirección y con la corrección de hitbox
@@ -155,7 +158,7 @@ class Tablero:
                         enemigo.matar(self.fase.mario.direccion)
                     else:
                         self.fase.mario.matar()
-                
+
         for id in a_despawnear:
             self.fase.despawnear_enemigo(id, True)
 
@@ -186,106 +189,148 @@ class Tablero:
             # Mil puntos por completar la fase
             self.__puntuacion += 1000
 
+            # Terminamos la fase
+            self.__fase.terminar_fase(True)
+
+            # Nos creamos una nueva fase
             self.__fase = Fase(self, self.fase.numero_fase + 1)
-            
+
+            # La iniciamos
+            self.__fase.iniciar_fase()
+
         # Fin del juego
         if self.fase.mario.vidas == 0:
-            self.fin_juego()
+            self.__fin_juego = True
+
+            # Terminamos la fase
+            self.__fase.terminar_fase()
 
     def draw(self):
-        # Si el juego ha terminado, no dibujamos nada
-        if self.__fin_juego: return
-        
-        pyxel.cls(0)
+        # Aqui vamos a controlar las distintas pantallas del juego
+        # Pantalla de inicio
+        if self.__inicio_juego:
+            pyxel.cls(0)
 
-        """Dibujamos los bloques"""
-        for bloque in self.fase.bloques.values():
-            pyxel.blt(
-                bloque.x,
-                bloque.y,
-                bloque.sprite[0],
-                bloque.sprite[1],
-                bloque.sprite[2],
-                bloque.sprite[3],
-                bloque.sprite[4],
-                8,
-            )
+            pyxel.text(70, 16, "SUPER MARIO BROS", 8)
 
-        """Dibujamos la animación del texto de la fase"""
-        pyxel.text(93, 80, "FASE " + str(self.fase.numero_fase), 7)
+            pyxel.text(85, 36, "CONTROLES", 12)
 
-        if pyxel.frame_count > 120:  # 4 segundos (30 fps * 4)
-            pyxel.text(
-                93, 80, "FASE " + str(self.fase.numero_fase), 0
-            )  # Lo pintamos de negro, para borrarlo
+            pyxel.blt(20, 46, config.TECLAS_AD[0], config.TECLAS_AD[1],
+                      config.TECLAS_AD[2], config.TECLAS_AD[3], config.TECLAS_AD[4], 8)
 
-        """Dibujamos el numero de vidas"""
-        pyxel.text(97, 0, str(self.fase.mario.vidas) + " HP", 4)
+            pyxel.blt(43, 46, config.FLECHAS[0], config.FLECHAS[1], config.FLECHAS[2],
+                      config.FLECHAS[3], config.FLECHAS[4], 8)
 
-        """Dibujamos la puntuación"""
-        pyxel.text(20, 0, str(self.__puntuacion) + " P", 10)
+            pyxel.text(20, 63, "MOVER A MARIO", 7)
 
-        """Dibujamos a Mario, teniendo en cuenta la dirección"""
-        pyxel.blt(
-            self.fase.mario.x,
-            self.fase.mario.y,
-            self.fase.mario.sprite[0],
-            self.fase.mario.sprite[1],
-            self.fase.mario.sprite[2],
-            self.fase.mario.direccion * self.fase.mario.sprite[3],
-            self.fase.mario.sprite[4],
-            8,
-        )
+            pyxel.blt(140, 50, config.ESPACIO[0], config.ESPACIO[1], config.ESPACIO[2],
+                      config.ESPACIO[3], config.ESPACIO[4], 8)
+            pyxel.text(140, 63, "SALTAR", 7)
 
-        """Dibujamos los enemigos"""
-        for enemigo in self.fase.enemigos.values():
-            pyxel.blt(
-                enemigo.x,
-                enemigo.y,
-                enemigo.sprite[0],
-                enemigo.sprite[1],
-                enemigo.sprite[2],
-                enemigo.direccion * enemigo.sprite[3],
-                enemigo.sprite[4],
-                8,
-            )
+            pyxel.text(60, 100, "PULSA         PARA EMPEZAR", 14)
 
-        """Dibujamos las hitboxes"""
-        if self.__hitboxes:
-            """Hitbox de mario"""
-            # Tenemos que hacer un ajuste de +-1 para que mario pueda pasar por los huecos
-            # Porque como el ancho de mario es 16, y justo los huecos son de 16, era muy dificil que pasase
-            # Entonces con un ajuste de +-1 en la x, mario puede pasar por los huecos
+            pyxel.blt(85, 98, config.ESPACIO_SOLO[0], config.ESPACIO_SOLO[1], config.ESPACIO_SOLO[2],
+                      config.ESPACIO_SOLO[3], config.ESPACIO_SOLO[4], 8)
 
-            # Si mario está en godmode no tiene hitbox, o si está con la animación de muerte
-            if not self.fase.mario.godmode and not self.fase.mario.animacion_muerto:
-                pyxel.rectb(
-                    self.fase.mario.x + 1,
-                    self.fase.mario.y,
-                    self.fase.mario.sprite[3] - 1,
-                    self.fase.mario.sprite[4],
-                    7,
+        # Pantalla de fin de juego
+        elif self.__fin_juego:
+            pyxel.cls(0)
+            pyxel.text(70, 26, "FIN DE LA PARTIDA", 8)
+            pyxel.text(90, 46, str(self.__puntuacion) + " puntos", 10)
+            pyxel.text(5, 120, "Pulsa Q para salir", 14)
+        # Pantalla de juego
+        else:
+            pyxel.cls(0)
+
+            """Dibujamos los bloques"""
+            for bloque in self.fase.bloques.values():
+                pyxel.blt(
+                    bloque.x,
+                    bloque.y,
+                    bloque.sprite[0],
+                    bloque.sprite[1],
+                    bloque.sprite[2],
+                    bloque.sprite[3],
+                    bloque.sprite[4],
+                    8,
                 )
 
-            """Hitboxes de los bloques"""
-            for bloque in self.fase.bloques.values():
-                if not bloque.tuberia and not bloque.pow:
-                    pyxel.rectb(bloque.x, bloque.y + 5, 16, 5, 7)
+            """Dibujamos la animación del texto de la fase"""
+            pyxel.text(93, 80, "FASE " + str(self.fase.numero_fase), 7)
 
-                if bloque.pow:
-                    pyxel.rectb(bloque.x, bloque.y, 16, bloque.sprite[4], 7)
+            if pyxel.frame_count > 120:  # 4 segundos (30 fps * 4)
+                pyxel.text(
+                    93, 80, "FASE " + str(self.fase.numero_fase), 0
+                )  # Lo pintamos de negro, para borrarlo
 
-            """Hitboxes de los enemigos"""
-            # Tenemos que hacer el mismo ajuste que con mario, aunque depende del enemigo
+            """Dibujamos el numero de vidas"""
+            pyxel.text(97, 0, str(self.fase.mario.vidas) + " HP", 4)
+
+            """Dibujamos la puntuación"""
+            pyxel.text(20, 0, str(self.__puntuacion) + " P", 10)
+
+            """Dibujamos a Mario, teniendo en cuenta la dirección"""
+            pyxel.blt(
+                self.fase.mario.x,
+                self.fase.mario.y,
+                self.fase.mario.sprite[0],
+                self.fase.mario.sprite[1],
+                self.fase.mario.sprite[2],
+                self.fase.mario.direccion * self.fase.mario.sprite[3],
+                self.fase.mario.sprite[4],
+                8,
+            )
+
+            """Dibujamos los enemigos"""
             for enemigo in self.fase.enemigos.values():
-                # Si el enemigo está con la animación de muerte no tiene hitbox
-                if not enemigo.animacion_muerto:
-                    pyxel.rectb(enemigo.x + enemigo.hitbox, enemigo.y, enemigo.sprite[3] - enemigo.hitbox,
-                            enemigo.sprite[4], 7)
+                pyxel.blt(
+                    enemigo.x,
+                    enemigo.y,
+                    enemigo.sprite[0],
+                    enemigo.sprite[1],
+                    enemigo.sprite[2],
+                    enemigo.direccion * enemigo.sprite[3],
+                    enemigo.sprite[4],
+                    8,
+                )
 
-        """Dibujamos el texto de godmode"""
-        if self.fase.mario.godmode:
-            pyxel.text(90, 34, "GODMODE", 3)
+            """Dibujamos las hitboxes"""
+            if self.__hitboxes:
+                """Hitbox de mario"""
+                # Tenemos que hacer un ajuste de +-1 para que mario pueda pasar por los huecos
+                # Porque como el ancho de mario es 16, y justo los huecos son de 16, era muy dificil que pasase
+                # Entonces con un ajuste de +-1 en la x, mario puede pasar por los huecos
+
+                # Si mario está en godmode no tiene hitbox, o si está con la animación de muerte
+                if not self.fase.mario.godmode and not self.fase.mario.animacion_muerto:
+                    pyxel.rectb(
+                        self.fase.mario.x + 1,
+                        self.fase.mario.y,
+                        self.fase.mario.sprite[3] - 1,
+                        self.fase.mario.sprite[4],
+                        7,
+                    )
+
+                """Hitboxes de los bloques"""
+                for bloque in self.fase.bloques.values():
+                    if not bloque.tuberia and not bloque.pow:
+                        pyxel.rectb(bloque.x, bloque.y + 5, 16, 5, 7)
+
+                    if bloque.pow:
+                        pyxel.rectb(bloque.x, bloque.y, 16,
+                                    bloque.sprite[4], 7)
+
+                """Hitboxes de los enemigos"""
+                # Tenemos que hacer el mismo ajuste que con mario, aunque depende del enemigo
+                for enemigo in self.fase.enemigos.values():
+                    # Si el enemigo está con la animación de muerte no tiene hitbox
+                    if not enemigo.animacion_muerto:
+                        pyxel.rectb(enemigo.x + enemigo.hitbox, enemigo.y, enemigo.sprite[3] - enemigo.hitbox,
+                                    enemigo.sprite[4], 7)
+
+            """Dibujamos el texto de godmode"""
+            if self.fase.mario.godmode:
+                pyxel.text(90, 34, "GODMODE", 3)
 
     def draw_hitboxes(self):
         self.__hitboxes = not self.__hitboxes
