@@ -112,6 +112,7 @@ class Tablero:
         # Movimiento de los enemigos, y animaciones de los enemigos tumbados
         # Despawn de los enemigos
         # Levantamiento automático de los enemigos
+        # Colisiones con mario
 
         a_despawnear = []
 
@@ -131,11 +132,30 @@ class Tablero:
                     enemigo.levantar()
                     enemigo.cambiar_color()
                 
-
+            # Despawn de los enemigos
             if enemigo.x < self.__despawn_enemigos[0][0] or enemigo.x > self.__despawn_enemigos[1][0]:
                 if enemigo.y == self.__despawn_enemigos[0][1] or enemigo.y == self.__despawn_enemigos[1][1]:
                     a_despawnear.append(enemigo.id)
+            
+            # Colisiones con mario, en caso de que no esté en godmode
+            if not self.fase.mario.godmode:
+                # Obtenemos x en función de la dirección y con la corrección de hitbox
+                if self.fase.mario.direccion == 1:
+                    # La x si vamos para la derecha será igual al ancho menos 1, por la hitbox
+                    x_hitbox = self.fase.mario.x + \
+                        self.fase.mario.sprite[3] - 1
+                else:
+                    # La x si vamos para la izquierda será igual menos 1 por la hitbox
+                    x_hitbox = self.fase.mario.x + 1
 
+                # Comprobamos si golpea con la cabeza o con los pies
+                if enemigo.golpea(x_hitbox, self.fase.mario.y) or enemigo.golpea(x_hitbox, self.fase.mario.y + self.fase.mario.sprite[4]):
+                    # TODO: Patear enemigos tumbados
+                    if enemigo.tumbado:
+                        enemigo.matar(self.fase.mario.direccion)
+                    else:
+                        self.fase.mario.matar()
+                
         for id in a_despawnear:
             self.fase.despawnear_enemigo(id, True)
 
@@ -160,26 +180,6 @@ class Tablero:
         # Eliminamos los bloques pow
         for id in a_eliminar:
             del self.fase.bloques[id]
-
-        # Colisiones con los enemigos en caso de que mario no esté en godmode
-        if not self.fase.mario.godmode:
-            for enemigo in self.fase.enemigos.values():
-                # Obtenemos x en función de la dirección y con la corrección de hitbox
-                if self.fase.mario.direccion == 1:
-                    # La x si vamos para la derecha será igual al ancho menos 1, por la hitbox
-                    x_hitbox = self.fase.mario.x + \
-                        self.fase.mario.sprite[3] - 1
-                else:
-                    # La x si vamos para la izquierda será igual menos 1 por la hitbox
-                    x_hitbox = self.fase.mario.x + 1
-
-                # Comprobamos si golpea con la cabeza o con los pies
-                if enemigo.golpea(x_hitbox, self.fase.mario.y) or enemigo.golpea(x_hitbox, self.fase.mario.y + self.fase.mario.sprite[4]):
-                    # TODO: Patear enemigos tumbados
-                    if enemigo.tumbado:
-                        enemigo.matar(self.fase.mario.direccion)
-                    else:
-                        self.fase.mario.matar()
 
         # Fin de la fase/nivel
         if len(self.fase.enemigos_de_la_fase) == 0 and len(self.fase.enemigos) == 0:
