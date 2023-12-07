@@ -22,6 +22,19 @@ class Tablero:
 
         # Nos creamos un booleano para dibujar las hitboxes
         self.__hitboxes = False
+        
+        # Nos creamos una variable para saber si el juego ha terminado
+        self.__fin_juego = False
+    
+    def fin_juego(self):
+        """Este método termina el juego, mostrando la puntuación final"""
+        
+        self.__fin_juego = True
+        
+        pyxel.cls(0)
+        pyxel.text(70, 26, "FIN DE LA PARTIDA", 8)
+        pyxel.text(90, 46, str(self.__puntuacion) + " puntos", 10)
+        pyxel.text(5, 120, "Pulsa Q para salir", 14)
 
     def update(self):
         # Controles:
@@ -34,16 +47,22 @@ class Tablero:
 
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
-        if pyxel.btn(pyxel.KEY_A) or pyxel.btn(pyxel.KEY_LEFT):
-            self.fase.mario.move_x(self.ancho, -1)
-        if pyxel.btn(pyxel.KEY_D) or pyxel.btn(pyxel.KEY_RIGHT):
-            self.fase.mario.move_x(self.ancho, 1)
-        if (pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.KEY_UP)) and self.fase.mario.toca_suelo(self.alto):
-            self.fase.mario.saltar(self.alto, pyxel.frame_count)
-        if pyxel.btnp(pyxel.KEY_E):
-            self.draw_hitboxes()
-        if pyxel.btnp(pyxel.KEY_G):
-            self.fase.mario.godmode = not self.fase.mario.godmode
+            
+        # Si el juego ha terminado solo nos interesa la Q para salir
+        if self.__fin_juego: return
+        
+        # Si estamos en la animación de muerte de Mario, no podemos hacer nada
+        if not self.fase.mario.animacion_muerto:
+            if pyxel.btn(pyxel.KEY_A) or pyxel.btn(pyxel.KEY_LEFT):
+                self.fase.mario.move_x(self.ancho, -1)
+            if pyxel.btn(pyxel.KEY_D) or pyxel.btn(pyxel.KEY_RIGHT):
+                self.fase.mario.move_x(self.ancho, 1)
+            if (pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.KEY_UP)) and self.fase.mario.toca_suelo(self.alto):
+                self.fase.mario.saltar(self.alto, pyxel.frame_count)
+            if pyxel.btnp(pyxel.KEY_E):
+                self.draw_hitboxes()
+            if pyxel.btnp(pyxel.KEY_G):
+                self.fase.mario.godmode = not self.fase.mario.godmode
 
         # Implementación de la gravedad
         self.fase.mario.move_y(self.alto, pyxel.frame_count, gravedad=True)
@@ -168,8 +187,15 @@ class Tablero:
             self.__puntuacion += 1000
 
             self.__fase = Fase(self, self.fase.numero_fase + 1)
+            
+        # Fin del juego
+        if self.fase.mario.vidas == 0:
+            self.fin_juego()
 
     def draw(self):
+        # Si el juego ha terminado, no dibujamos nada
+        if self.__fin_juego: return
+        
         pyxel.cls(0)
 
         """Dibujamos los bloques"""
