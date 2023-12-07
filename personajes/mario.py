@@ -5,7 +5,7 @@ from typing import Optional, Union
 
 
 class Mario:
-    def __init__(self, x: int, y: int, bloques: dict, enemigos: dict, dir: int = 1):
+    def __init__(self, x: int, y: int, bloques: dict[Bloque], enemigos: dict[Enemigo], dir: int = 1):
         """Este método creará a Mario
         @param x: es la posicion x de inicio de Mario
         @param y: es la posicion y de inicio de Mario

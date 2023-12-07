@@ -3,7 +3,7 @@ from entidades.bloque import Bloque
 
 
 class Enemigo:
-    def __init__(self, x: int, y: int, dir: int, sprites: list, bloques: dict, hitbox: int):
+    def __init__(self, x: int, y: int, dir: int, sprites: list, bloques: dict[Bloque], hitbox: int):
         """Este método creará un enemigo
 
         @param x: es la posicion x de inicio del enemigo

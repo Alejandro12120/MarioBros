@@ -1,7 +1,6 @@
 from fase import Fase
 import pyxel
 import random
-from personajes.enemigos.tipos.mosca import Mosca
 
 
 class Tablero:
