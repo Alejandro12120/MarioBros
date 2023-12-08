@@ -68,7 +68,8 @@ class Tablero:
             if pyxel.btnp(pyxel.KEY_G):
                 self.fase.mario.godmode = not self.fase.mario.godmode
             if pyxel.btnp(pyxel.KEY_M):
-                self.fase.spawnear_moneda(random.choice(self.__spawner_enemigos))
+                self.fase.spawnear_moneda(
+                    random.choice(self.__spawner_enemigos))
 
         # Implementación de la gravedad
         self.fase.mario.move_y(self.alto, pyxel.frame_count, gravedad=True)
@@ -148,8 +149,7 @@ class Tablero:
                 # Obtenemos x en función de la dirección y con la corrección de hitbox
                 if self.fase.mario.direccion == 1:
                     # La x si vamos para la derecha será igual al ancho menos 1, por la hitbox
-                    x_hitbox = self.fase.mario.x + \
-                        self.fase.mario.sprite[3] - 1
+                    x_hitbox = self.fase.mario.x + self.fase.mario.sprite[3] - 1
                 else:
                     # La x si vamos para la izquierda será igual menos 1 por la hitbox
                     x_hitbox = self.fase.mario.x + 1
@@ -186,30 +186,50 @@ class Tablero:
         # Eliminamos los bloques pow
         for id in a_eliminar:
             del self.fase.bloques[id]
-        
+
         # Monedas
-        
+
         a_eliminar.clear()
-        
+
         for moneda in self.fase.monedas.values():
             # Movemos a la moneda
             moneda.move(self.alto, self.ancho)
-            
+
             # La animamos
             # Y si devuelve true, la eliminamos
             if moneda.animar():
                 a_eliminar.append(moneda.id)
-            
+
+            # Colisiones de Mario con las monedas
+            if (not self.fase.mario.godmode and 
+                not self.fase.mario.animacion_muerto and 
+                not moneda.eliminar):
+                # Obtenemos x en función de la dirección y con la corrección de hitbox
+                if self.fase.mario.direccion == 1:
+                    # La x si vamos para la derecha será igual al ancho menos 1, por la hitbox
+                    x_hitbox = self.fase.mario.x + self.fase.mario.sprite[3] - 1
+                else:
+                    # La x si vamos para la izquierda será igual menos 1 por la hitbox
+                    x_hitbox = self.fase.mario.x + 1
+
+                # Comprobamos si golpea con la cabeza o con los pies
+                if (moneda.golpea(x_hitbox, self.fase.mario.y) or 
+                    moneda.golpea(x_hitbox, self.fase.mario.y + self.fase.mario.sprite[4])):
+                    # Eliminamos la moneda
+                    moneda.obtener()
+
+                    # Sumamos 100 puntos
+                    self.__puntuacion += 100
+
             # Despawn de las monedas
             if moneda.x < self.__despawn_enemigos[0][0] or moneda.x > self.__despawn_enemigos[1][0]:
                 # Hacemos un ajuste de +5 porque la moneda es más baja que los enemigos
                 if moneda.y - 5 == self.__despawn_enemigos[0][1] or moneda.y - 5 == self.__despawn_enemigos[1][1]:
                     a_eliminar.append(moneda.id)
-        
+
         # Eliminamos las monedas
         for id in a_eliminar:
             del self.fase.monedas[id]
-        
 
         # Fin de la fase/nivel
         if len(self.fase.enemigos_de_la_fase) == 0 and len(self.fase.enemigos) == 0:
@@ -320,7 +340,7 @@ class Tablero:
                     enemigo.sprite[4],
                     8,
                 )
-            
+
             """Dibujamos las monedas"""
             for moneda in self.fase.monedas.values():
                 pyxel.blt(
@@ -367,10 +387,11 @@ class Tablero:
                     if not enemigo.animacion_muerto:
                         pyxel.rectb(enemigo.x + enemigo.hitbox, enemigo.y, enemigo.sprite[3] - enemigo.hitbox,
                                     enemigo.sprite[4], 7)
-                
+
                 """Hitbox de las monedas"""
                 for moneda in self.fase.monedas.values():
-                    pyxel.rectb(moneda.x, moneda.y, moneda.sprite[3], moneda.sprite[4], 7)
+                    pyxel.rectb(moneda.x, moneda.y,
+                                moneda.sprite[3], moneda.sprite[4], 7)
 
             """Dibujamos el texto de godmode"""
             if self.fase.mario.godmode:
