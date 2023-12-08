@@ -290,9 +290,9 @@ class Tablero:
                       config.ESPACIO[3], config.ESPACIO[4], 8)
             pyxel.text(140, 63, "SALTAR", 7)
 
-            pyxel.text(60, 100, "PULSA         PARA EMPEZAR", 14)
+            pyxel.text(55, 100, "PULSA         PARA EMPEZAR", 14)
 
-            pyxel.blt(85, 98, config.ESPACIO_SOLO[0], config.ESPACIO_SOLO[1], config.ESPACIO_SOLO[2],
+            pyxel.blt(80, 98, config.ESPACIO_SOLO[0], config.ESPACIO_SOLO[1], config.ESPACIO_SOLO[2],
                       config.ESPACIO_SOLO[3], config.ESPACIO_SOLO[4], 8)
 
         # Pantalla de fin de juego
