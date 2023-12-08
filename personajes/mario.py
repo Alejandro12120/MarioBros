@@ -120,6 +120,7 @@ class Mario:
         # Si la velocidad es negativa significa que va hacia arriba
         # Si la velocidad es positiva significa que va hacia abajo
         if self.__velocidad_y < 0 and self.__y <= 0:
+            self.__velocidad_y = 0
             self.__y = 0
         elif self.__velocidad_y > 0 and self.toca_borde(alto):
             self.__velocidad_y = 0  # Reiniciamos la velocidad
