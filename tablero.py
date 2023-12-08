@@ -29,6 +29,8 @@ class Tablero:
 
         # Nos creamos una variable para controlar si estamos en la pantalla de inicio
         self.__inicio_juego = True
+        # Frames inicio juego
+        self.__frames_inicio_juego = 0
 
     def update(self):
         # Controles:
@@ -49,6 +51,9 @@ class Tablero:
 
             # Quitamos la pantalla de inicio
             self.__inicio_juego = False
+            
+            # Nos guardamos el frame en el que se ha pulsado el espacio, para luego hacer calculos de tiempo
+            self.__frames_inicio_juego = pyxel.frame_count
 
         # Si el juego ha terminado solo nos interesa la Q para salir
         # Si el juego aun no ha empezado, solo nos interesa el espacio para empezar
@@ -96,9 +101,7 @@ class Tablero:
                     enemigo.x += 3
                 else:
                     enemigo.x -= 3
-
-                # enemigo.y += 1
-
+                    
                 # Si el enemigo sale del borde, finalmente es eliminado
                 if enemigo.x < 0 or enemigo.x > self.ancho:
                     a_despawnear.append(enemigo.id)
@@ -112,7 +115,8 @@ class Tablero:
 
         # Cada 4 segundos (30 fps * 4) se generará un enemigo
         # En el segundo 0 no se generará nada
-        if pyxel.frame_count % 120 == 0 and pyxel.frame_count != 0:
+        if (pyxel.frame_count % 120 == 0 and 
+            pyxel.frame_count != 0):
             self.fase.spawnear_enemigo(
                 self.__spawner_enemigos[random.randint(0, 1)])
 
@@ -244,6 +248,7 @@ class Tablero:
 
             # La iniciamos
             self.__fase.iniciar_fase()
+            self.__frames_inicio_juego = pyxel.frame_count
 
         # Fin del juego
         if self.fase.mario.vidas == 0:
@@ -305,7 +310,7 @@ class Tablero:
             """Dibujamos la animación del texto de la fase"""
             pyxel.text(93, 80, "FASE " + str(self.fase.numero_fase), 7)
 
-            if pyxel.frame_count > 120:  # 4 segundos (30 fps * 4)
+            if pyxel.frame_count - self.__frames_inicio_juego > 120:  # 4 segundos (30 fps * 4)
                 pyxel.text(
                     93, 80, "FASE " + str(self.fase.numero_fase), 0
                 )  # Lo pintamos de negro, para borrarlo
