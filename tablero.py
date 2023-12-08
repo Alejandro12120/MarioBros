@@ -109,7 +109,7 @@ class Tablero:
 
         for id in a_despawnear:
             # 100 puntos por matar a un enemigo
-            self.__puntuacion += 100
+            self.__puntuacion += config.MATAR_ENEMIGO
 
             # Eliminamos finalmente al enemigo
             self.fase.despawnear_enemigo(id, False)
@@ -144,10 +144,11 @@ class Tablero:
                     enemigo.levantar()
                     enemigo.cambiar_color()
 
-            # Despawn de los enemigos
-            if enemigo.x < self.__despawn_enemigos[0][0] or enemigo.x > self.__despawn_enemigos[1][0]:
-                if enemigo.y == self.__despawn_enemigos[0][1] or enemigo.y == self.__despawn_enemigos[1][1]:
-                    a_despawnear.append(enemigo.id)
+            # Despawn de los enemigos, si no hay animación
+            if not enemigo.animacion_muerto:
+                if enemigo.x < self.__despawn_enemigos[0][0] or enemigo.x > self.__despawn_enemigos[1][0]:
+                    if enemigo.y == self.__despawn_enemigos[0][1] or enemigo.y == self.__despawn_enemigos[1][1]:
+                        a_despawnear.append(enemigo.id)
 
             # Colisiones con mario, en caso de que no esté en godmode
             if not self.fase.mario.godmode:
@@ -161,7 +162,6 @@ class Tablero:
 
                 # Comprobamos si golpea con la cabeza o con los pies
                 if enemigo.golpea(x_hitbox, self.fase.mario.y) or enemigo.golpea(x_hitbox, self.fase.mario.y + self.fase.mario.sprite[4]):
-                    # TODO: Patear enemigos tumbados
                     if enemigo.tumbado:
                         enemigo.matar(self.fase.mario.direccion)
                     else:
@@ -233,8 +233,8 @@ class Tablero:
                     # Eliminamos la moneda
                     moneda.obtener()
 
-                    # Sumamos 100 puntos
-                    self.__puntuacion += 100
+                    # Sumamos los puntos
+                    self.__puntuacion += config.COGER_MONEDA
 
             # Despawn de las monedas
             if moneda.x < self.__despawn_enemigos[0][0] or moneda.x > self.__despawn_enemigos[1][0]:
@@ -248,8 +248,8 @@ class Tablero:
 
         # Fin de la fase/nivel
         if len(self.fase.enemigos_de_la_fase) == 0 and len(self.fase.enemigos) == 0:
-            # Mil puntos por completar la fase
-            self.__puntuacion += 1000
+            # Puntos por completar la fase
+            self.__puntuacion += config.TERMINAR_FASE
 
             # Terminamos la fase
             self.__fase.terminar_fase(True)

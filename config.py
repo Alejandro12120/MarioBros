@@ -25,6 +25,10 @@ APARICION_CANGREJO = 8
 # podrán aparecer moscas de forma aleatoria
 APARICION_MOSCAS = 12
 
+"""Puntaciones"""
+MATAR_ENEMIGO = 100
+COGER_MONEDA = 200
+TERMINAR_FASE = 1000
 
 """
 Aquí vamos a definir los sprites
