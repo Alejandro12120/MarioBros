@@ -22,6 +22,7 @@ class Fase:
         self.__enemigos: dict[int, Enemigo] = {}
         self.__enemigos_de_la_fase: dict[int, Enemigo] = {}  # Este diccionario contendrá todos los enemigos que saldrán progresivamente
         self.__monedas: dict[int, Moneda] = {}
+        self.__racha_enemigos = 0
 
         self.__numero_fase = numero_fase
         self.__mario: Mario = Mario(80, 107, self.__bloques, self.__enemigos, 1)
@@ -188,6 +189,8 @@ class Fase:
         if respawn:
             # Si queremos que el enemigo se vuelva a spawnear, lo metemos en el diccionario de enemigos de la fase
             self.__enemigos_de_la_fase[enemigo.id] = enemigo
+        else:
+            self.__racha_enemigos += 1 # Aumentamos el número de enemigos eliminados
 
         del self.__enemigos[id]  # Lo despawneamos, es decir lo eliminamos del diccionario de enemigos
     
@@ -238,3 +241,19 @@ class Fase:
     def mario(self) -> Mario:
         """Mario"""
         return self.__mario
+    
+    @property
+    def racha_enemigos(self) -> int:
+        """Devuelve el la racha de enemigos, atención, cada 3 enemigos se limpia a 0"""
+        return self.__racha_enemigos
+    
+    @racha_enemigos.setter
+    def racha_enemigos(self, racha: int):
+        """Establece la racha de enemigos
+        
+        @param racha: es la racha de enemigos
+        """
+        if type(racha) != int:
+            raise TypeError("La racha de enemigos debe ser un entero")
+        
+        self.__racha_enemigos = racha

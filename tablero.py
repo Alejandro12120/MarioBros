@@ -29,7 +29,8 @@ class Tablero:
 
         # Nos creamos una variable para controlar si estamos en la pantalla de inicio
         self.__inicio_juego = True
-        # Frames inicio juego
+        # Frames inicio juego, para calcular el tiempo
+        # Ya que necesitamos que pasen 4 segundos desde que se pulsa el espacio para empezar
         self.__frames_inicio_juego = 0
 
     def update(self):
@@ -114,9 +115,9 @@ class Tablero:
             self.fase.despawnear_enemigo(id, False)
 
         # Cada 4 segundos (30 fps * 4) se generará un enemigo
-        # En el segundo 0 no se generará nada
+        # En el segundo 0 no se generará nada (es decir el frame_count es igual a los frames de inicio de juego)
         if (pyxel.frame_count % 120 == 0 and 
-            pyxel.frame_count != 0):
+            pyxel.frame_count != self.__frames_inicio_juego):
             self.fase.spawnear_enemigo(
                 self.__spawner_enemigos[random.randint(0, 1)])
 
@@ -194,6 +195,16 @@ class Tablero:
         # Monedas
 
         a_eliminar.clear()
+        
+        # Cada 20 segundos spawneamos una moneda
+        # Al inicio de la partida no spawneamos moneda
+        if pyxel.frame_count - self.__frames_inicio_juego % 600 == 0 and pyxel.frame_count != self.__frames_inicio_juego:  # 20 segundos (30 fps * 20)
+            self.fase.spawnear_moneda(random.choice(self.__spawner_enemigos))
+        
+        if self.fase.racha_enemigos % 3 == 0 and self.fase.racha_enemigos != 0:
+            self.fase.spawnear_moneda(random.choice(self.__spawner_enemigos))
+            
+            self.fase.racha_enemigos = 0
 
         for moneda in self.fase.monedas.values():
             # Movemos a la moneda
@@ -288,7 +299,7 @@ class Tablero:
         elif self.__fin_juego:
             pyxel.cls(0)
             pyxel.text(70, 26, "FIN DE LA PARTIDA", 8)
-            pyxel.text(90, 46, str(self.__puntuacion) + " puntos", 10)
+            pyxel.text(85, 46, str(self.__puntuacion) + " puntos", 10)
             pyxel.text(5, 120, "Pulsa Q para salir", 14)
         # Pantalla de juego
         else:
