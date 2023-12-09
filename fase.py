@@ -123,7 +123,7 @@ class Fase:
 
             self.__enemigos_de_la_fase[enemigo.id] = enemigo
 
-    def terminar_fase(self, completada: bool = False):
+    def terminar_fase(self):
         """Este método se encargará de terminar la fase
         
         @param completada: si la fase ha sido completada
@@ -136,9 +136,8 @@ class Fase:
         # Eliminamos todos los bloques
         self.__bloques.clear()
 
-        # Eliminamos a Mario, si la fase no ha sido completada
-        if not completada:
-            del self.__mario
+        # Como se crea un nuevo Mario cada fase da igual eliminarlo
+        del self.__mario
 
 
     def spawnear_enemigo(self, spawner: tuple):

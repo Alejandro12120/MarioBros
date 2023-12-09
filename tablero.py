@@ -252,7 +252,7 @@ class Tablero:
             self.__puntuacion += config.TERMINAR_FASE
 
             # Terminamos la fase
-            self.__fase.terminar_fase(True)
+            self.__fase.terminar_fase()
 
             # Nos creamos una nueva fase
             self.__fase = Fase(self, self.fase.numero_fase + 1)
