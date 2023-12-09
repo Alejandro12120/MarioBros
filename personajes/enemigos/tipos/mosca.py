@@ -40,13 +40,11 @@ class Mosca(Enemigo):
             self.move_x(ancho)
         
             if self.toca_suelo(alto):
-                self.saltar(alto)
+                self.saltar(alto, -1.25)
         
         # Implementamos la gravedad
         self.move_y(alto)
         
-        
-    
     def move_x(self, ancho: int):
         # Si el enemigo está tumbado no se moverá
         # Si el enemigo está cayendo no se moverá
@@ -101,15 +99,16 @@ class Mosca(Enemigo):
 
         self.y += self.__velocidad_y
     
-    def saltar(self, alto: int):
+    def saltar(self, alto: int, velocidad: float):
         """Este método hará saltar a la mosca
         
         @param alto: es el alto del tablero
+        @param velocidad: es la velocidad del salto
         """
         
         if self.tumbado: return
         
-        self.__velocidad_y = -1.25
+        self.__velocidad_y = velocidad
         self.move_y(alto, False)
     
     def comprobar_si_ha_sido_tumbado(self, frames_actuales: int):

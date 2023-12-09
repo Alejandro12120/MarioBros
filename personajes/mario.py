@@ -74,6 +74,7 @@ class Mario:
         """Este método moverá a Mario verticalmente
 
         @param alto: es el alto del tablero
+        @param frames: es el numero de frames actuales
         @param gravedad: es un bool para saber si se aplica gravedad, por defecto True
         """
 
@@ -107,13 +108,18 @@ class Mario:
 
             bloque_golpeado_superior.golpear()
             
+            # Golpeamos los enemigos golpeados por la plataforma
             posibles_enemigos_golpeados = self.obtener_enemigo_golpeado(bloque_golpeado_superior)
             if len(posibles_enemigos_golpeados) != 0:
                 for enemigo_golpeado in posibles_enemigos_golpeados:
+                    # Lo golpeamos
                     enemigo_golpeado.recibir_golpe(frames)
-
+                    
+                    # Pequeña animación de bote debido al golpe
+                    enemigo_golpeado.saltar(alto, -1.5)
+                    
+            # Si el bloque es un pow, volteamos todos los enemigos que toquen suelo
             if bloque_golpeado_superior.pow:
-                # Si el bloque es un pow, volteamos todos los enemigos que toquen suelo
                 for enemigo in self.__enemigos.values():
                     if enemigo.toca_suelo(alto):
                         if enemigo.tumbado:

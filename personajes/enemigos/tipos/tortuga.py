@@ -76,13 +76,13 @@ class Tortuga(Enemigo):
 
         # El sprite no es necesario actualizarlo, ya que se actualiza en el getter
 
-    def move_y(self, alto: int):
-        """Este método mueve la tortuga verticalmente, como las tortugas no saltan, se asume que siempre será por gravedad
-
+    def move_y(self, alto: int, gravedad: bool = True):
+        """Este método mueve la tortuga verticalmente
+        
         @param alto: es el alto del tablero
         """
         
-        if not self.toca_suelo(alto):
+        if gravedad and not self.toca_suelo(alto):
             self.__velocidad_y += self.__gravedad
             
         # Comprobamos de forma distinta si se golpea un bloque o si golpea un borde
@@ -106,6 +106,20 @@ class Tortuga(Enemigo):
             self.y = alto - self.sprite[4]  # Cambiamos su posición y
 
         self.y += self.__velocidad_y
+    
+    def saltar(self, alto: int, velocidad: float):
+        """Este método hace saltar a la tortuga,
+        solo se usa cuando es golpeada
+        
+        @param alto: es el alto del tablero
+        @param velocidad: es la velocidad del salto
+        """
+        
+        # No hay que comprobar si está tumbado, ya que los
+        # cangrejos saltan cuando son golpeadas por la plataforma
+        
+        self.__velocidad_y = velocidad
+        self.move_y(alto, False)
         
 
     def comprobar_si_ha_sido_tumbado(self, frames_actuales: int):
