@@ -373,16 +373,16 @@ class Tablero:
             """Dibujamos las hitboxes"""
             if self.__hitboxes:
                 """Hitbox de mario"""
-                # Tenemos que hacer un ajuste de +-1 para que mario pueda pasar por los huecos
+                # Tenemos que hacer un ajuste de +-2 para que mario pueda pasar por los huecos
                 # Porque como el ancho de mario es 16, y justo los huecos son de 16, era muy dificil que pasase
-                # Entonces con un ajuste de +-1 en la x, mario puede pasar por los huecos
+                # Entonces con un ajuste de +-2 en la x, mario puede pasar por los huecos
 
                 # Si mario está en godmode no tiene hitbox, o si está con la animación de muerte
                 if not self.fase.mario.godmode and not self.fase.mario.animacion_muerto:
                     pyxel.rectb(
-                        self.fase.mario.x + 1,
+                        self.fase.mario.x + 2,
                         self.fase.mario.y,
-                        self.fase.mario.sprite[3] - 1,
+                        self.fase.mario.sprite[3] - 2,
                         self.fase.mario.sprite[4],
                         7,
                     )

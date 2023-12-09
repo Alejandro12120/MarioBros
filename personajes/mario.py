@@ -106,6 +106,11 @@ class Mario:
                 return
 
             bloque_golpeado_superior.golpear()
+            
+            posibles_enemigos_golpeados = self.obtener_enemigo_golpeado(bloque_golpeado_superior)
+            if len(posibles_enemigos_golpeados) != 0:
+                for enemigo_golpeado in posibles_enemigos_golpeados:
+                    enemigo_golpeado.recibir_golpe(frames)
 
             if bloque_golpeado_superior.pow:
                 # Si el bloque es un pow, volteamos todos los enemigos que toquen suelo
@@ -200,21 +205,47 @@ class Mario:
             if bloque.tuberia:
                 continue
 
-            # Hacemos el ajuste de +-1 explicado en el método tablero.draw()
+            # Hacemos el ajuste de +-2 explicado en el método tablero.draw()
             if inferiormente:
-                if bloque.golpea(self.__x + 1, self.__y + alto_mario):
+                if bloque.golpea(self.__x + 2, self.__y + alto_mario):
                     return bloque
 
-                if bloque.golpea(self.__x + ancho_mario - 1, self.__y + alto_mario):
+                if bloque.golpea(self.__x + ancho_mario - 2, self.__y + alto_mario):
                     return bloque
             else:
-                if bloque.golpea(self.__x + 1, self.__y):
+                if bloque.golpea(self.__x + 2, self.__y):
                     return bloque
 
-                if bloque.golpea(self.__x + ancho_mario - 1, self.__y):
+                if bloque.golpea(self.__x + ancho_mario - 2, self.__y):
                     return bloque
 
         return None
+
+    def obtener_enemigo_golpeado(self, bloque: Bloque) -> list[Enemigo]:
+        """Este método obtiene el enemigo que golpea Mario al golpear una plataforma
+        
+        @param bloque: es el bloque que golpea Mario
+        @return: una lista de enemigos que golpea Mario, estará vacía si no golpea ningún enemigo
+        """
+         
+         
+        enemigos_golpeados = []   
+        for enemigo in self.__enemigos.values():
+            alto_enemigo = enemigo.sprite[4]
+            ancho_enemigo = enemigo.sprite[3]
+            
+            if enemigo.y + alto_enemigo != bloque.y + 5:
+                continue
+            
+            if enemigo.x + 1 >= bloque.x + ancho_enemigo:
+                continue
+            
+            if enemigo.x + ancho_enemigo - 1 <= bloque.x:
+                continue
+            
+            enemigos_golpeados.append(enemigo)
+            
+        return enemigos_golpeados
 
     def toca_suelo(self, alto: int) -> bool:
         """Este método comprueba si Mario toca el suelo

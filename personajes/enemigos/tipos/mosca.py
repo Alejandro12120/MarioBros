@@ -27,7 +27,7 @@ class Mosca(Enemigo):
         # Almacenamos un atributo para saber si la mosca ha cambiado color
         self.__color = False
 
-        # Aceleracon en el eje x
+        # Aceleracion en el eje x
         self.__aceleracion_x = 1
         self.__velocidad_y = 0
 
@@ -42,12 +42,10 @@ class Mosca(Enemigo):
             if self.toca_suelo(alto):
                 self.saltar(alto)
         
-        
-        
         # Implementamos la gravedad
         self.move_y(alto)
         
-        pass
+        
     
     def move_x(self, ancho: int):
         # Si el enemigo está tumbado no se moverá
@@ -114,16 +112,22 @@ class Mosca(Enemigo):
         self.__velocidad_y = -1.25
         self.move_y(alto, False)
     
-    def comprobar_si_ha_sido_tumbado(self):
+    def comprobar_si_ha_sido_tumbado(self, frames_actuales: int):
         """Este método comprueba si la mosca ha sido tumbada"""
         if self.__golpes_recibidos >= self.__golpes_maximo:
-            self.tumbar()
+            self.tumbar(frames_actuales)
 
-    def recibir_golpe(self):
+    def recibir_golpe(self, frames_actuales: int):
         """Este método hace que la mosca reciba un golpe"""
         self.__golpes_recibidos += 1
+        
+        # Si golpeamos a un enemigo tumbado, este se levanta
+        if self.tumbado:
+            self.levantar()
+            return
+        
         # Comprobamos si ha sido tumbada
-        self.comprobar_si_ha_sido_tumbado()
+        self.comprobar_si_ha_sido_tumbado(frames_actuales)
     
     def cambiar_color(self):
         """Este método cambia el color a la mosca"""

@@ -108,17 +108,23 @@ class Tortuga(Enemigo):
         self.y += self.__velocidad_y
         
 
-    def comprobar_si_ha_sido_tumbado(self):
+    def comprobar_si_ha_sido_tumbado(self, frames_actuales: int):
         """Este método comprueba si la tortuga ha sido tumbada"""
         if self.__golpes_recibidos >= self.__golpes_maximo:
-            self.tumbar()
+            self.tumbar(frames_actuales)
 
-    def recibir_golpe(self):
+    def recibir_golpe(self, frames_actuales: int):
         """Este método hace que la tortuga reciba un golpe"""
         self.__golpes_recibidos += 1
-        # Comprobamos si ha sido tumbada
-        self.comprobar_si_ha_sido_tumbado()
         
+        # Si golpeamos a un enemigo tumbado, este se levanta
+        if self.tumbado:
+            self.levantar()
+            return
+        
+        # Comprobamos si ha sido tumbada
+        self.comprobar_si_ha_sido_tumbado(frames_actuales)
+         
     def cambiar_color(self):
         """Este método cambia el color a la tortuga"""
         

@@ -103,19 +103,24 @@ class Cangrejo(Enemigo):
 
         self.y += self.__velocidad_y
     
-    def comprobar_si_ha_sido_tumbado(self):
+    def comprobar_si_ha_sido_tumbado(self, frames_actuales: int):
         """Este método comprueba si el cangrejo ha sido tumbado"""
         if self.__golpes_recibidos >= self.__golpes_maximo and self.__enfadado:
-            self.tumbar()
+            self.tumbar(frames_actuales)
         else:
             # Si no ha sido tumbada, se enfada
             self.enfadarse()
 
-    def recibir_golpe(self):
+    def recibir_golpe(self, frames_actuales: int):
         """Este método hace que el cangrejo reciba un golpe"""
         self.__golpes_recibidos += 1
+        
+        if self.tumbado:
+            self.levantar()
+            return
+        
         # Comprobamos si ha sido tumbada
-        self.comprobar_si_ha_sido_tumbado()
+        self.comprobar_si_ha_sido_tumbado(frames_actuales)
     
     def cambiar_color(self):
         """Este método cambia el color del cangrejo"""
@@ -163,6 +168,8 @@ class Cangrejo(Enemigo):
             self.sprites = config.CANGREJO_COLOR_ENFADADO_SPRITE
         else:
             self.sprites = config.CANGREJO_ENFADADO_SPRITE
+            # Hacemos que vaya más rápido
+            self.__aceleracion_x = 1.5
     
     @property
     def color(self) -> bool:
