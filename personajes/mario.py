@@ -36,7 +36,7 @@ class Mario:
         self.__aceleracion_x = 1.6
         self.__velocidad_y = 0
 
-        self.__gravedad = 0.4
+        self.__gravedad = 0.3
         
         # Este atributo cambiará cuando se esté ejecutando la animación de muerte
         self.__animacion_muerto = False
@@ -160,7 +160,7 @@ class Mario:
         @param alto: es el alto del tablero
         """
 
-        self.__velocidad_y = -5
+        self.__velocidad_y = -4.9
         self.move_y(alto, frames, False)
 
     def matar(self):
