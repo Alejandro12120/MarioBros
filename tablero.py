@@ -390,7 +390,12 @@ class Tablero:
                 """Hitboxes de los bloques"""
                 for bloque in self.fase.bloques.values():
                     if not bloque.tuberia and not bloque.pow:
-                        pyxel.rectb(bloque.x, bloque.y + 5, 16, 5, 7)
+                        # Si el bloque es una plataforma y tiene animación
+                        # Significa que ha sido golpeada, por lo que tenemos que hacer un ajuste de hitbox
+                        if bloque.animacion != 0:
+                            pyxel.rectb(bloque.x, bloque.y + 3, 16, 7, 7)
+                        else:
+                            pyxel.rectb(bloque.x, bloque.y + 5, 16, 5, 7)
 
                     if bloque.pow:
                         pyxel.rectb(bloque.x, bloque.y, 16,

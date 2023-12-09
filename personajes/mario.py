@@ -228,22 +228,25 @@ class Mario:
         @return: una lista de enemigos que golpea Mario, estará vacía si no golpea ningún enemigo
         """
          
-         
         enemigos_golpeados = []   
         for enemigo in self.__enemigos.values():
             alto_enemigo = enemigo.sprite[4]
             ancho_enemigo = enemigo.sprite[3]
             
-            if enemigo.y + alto_enemigo != bloque.y + 5:
-                continue
+            # Vamos a tener que hacer un pequeño ajuste en la y de los enemigos
+            # Ya que las moscas son súper díficiles de matar
             
-            if enemigo.x + 1 >= bloque.x + ancho_enemigo:
-                continue
+            # Comprobamos el pie izquierdo
+            if (bloque.y + 3 <= enemigo.y + alto_enemigo <= bloque.y + 5 and
+                bloque.x <= enemigo.x <= bloque.x + 16):
+
+                enemigos_golpeados.append(enemigo)
             
-            if enemigo.x + ancho_enemigo - 1 <= bloque.x:
-                continue
-            
-            enemigos_golpeados.append(enemigo)
+            # Comprobamos el pie derecho    
+            elif (bloque.y + 3 <= enemigo.y + alto_enemigo <= bloque.y + 5 and
+                bloque.x <= enemigo.x  + ancho_enemigo <= bloque.x + 16):
+
+                enemigos_golpeados.append(enemigo)
             
         return enemigos_golpeados
 
