@@ -394,7 +394,7 @@ class Tablero:
                         # Si el bloque es una plataforma y tiene animación
                         # Significa que ha sido golpeada, por lo que tenemos que hacer un ajuste de hitbox
                         if bloque.animacion != 0:
-                            pyxel.rectb(bloque.x, bloque.y + 3, 16, 7, 7)
+                            pyxel.rectb(bloque.x, bloque.y + 2, 16, 8, 7)
                         else:
                             pyxel.rectb(bloque.x, bloque.y + 5, 16, 5, 7)
 

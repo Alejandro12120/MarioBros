@@ -59,7 +59,7 @@ class Mario:
 
         # Si se sale por la derecha, aparece por la izquierda
         # Le hacemos una corrección de +8 para evitar un bug
-        if dir == 1 and self.__x + 8 >= ancho:
+        if dir == 1 and self.__x + 16 >= ancho:
             self.__x = 0
         # Si se sale por la izquierda, aparece por la derecha
         elif dir == -1 and self.__x <= 0:
@@ -244,13 +244,13 @@ class Mario:
             # Ya que las moscas son súper díficiles de matar
             
             # Comprobamos el pie izquierdo
-            if (bloque.y + 3 <= enemigo.y + alto_enemigo <= bloque.y + 5 and
+            if (bloque.y + 2 <= enemigo.y + alto_enemigo <= bloque.y + 5 and
                 bloque.x <= enemigo.x <= bloque.x + 16):
 
                 enemigos_golpeados.append(enemigo)
             
             # Comprobamos el pie derecho    
-            elif (bloque.y + 3 <= enemigo.y + alto_enemigo <= bloque.y + 5 and
+            elif (bloque.y + 2 <= enemigo.y + alto_enemigo <= bloque.y + 5 and
                 bloque.x <= enemigo.x  + ancho_enemigo <= bloque.x + 16):
 
                 enemigos_golpeados.append(enemigo)
