@@ -220,17 +220,16 @@ class Tablero:
             if (not self.fase.mario.godmode and 
                 not self.fase.mario.animacion_muerto and 
                 not moneda.eliminar):
-                # Obtenemos x en función de la dirección y con la corrección de hitbox
-                if self.fase.mario.direccion == 1:
-                    # La x si vamos para la derecha será igual al ancho menos 1, por la hitbox
-                    x_hitbox = self.fase.mario.x + self.fase.mario.sprite[3] - 1
-                else:
-                    # La x si vamos para la izquierda será igual menos 1 por la hitbox
-                    x_hitbox = self.fase.mario.x + 1
+                # Obtenemos la x de los dos extremos
+                extremo_derecho = self.fase.mario.x + self.fase.mario.sprite[3] - 1
+                extremo_izquierdo = self.fase.mario.x + 1
 
                 # Comprobamos si golpea con la cabeza o con los pies
-                if (moneda.golpea(x_hitbox, self.fase.mario.y) or 
-                    moneda.golpea(x_hitbox, self.fase.mario.y + self.fase.mario.sprite[4])):
+                if (moneda.golpea(extremo_derecho, self.fase.mario.y) or
+                    moneda.golpea(extremo_izquierdo, self.fase.mario.y) or
+                    
+                    moneda.golpea(extremo_derecho, self.fase.mario.y + self.fase.mario.sprite[4]) or
+                    moneda.golpea(extremo_izquierdo, self.fase.mario.y + self.fase.mario.sprite[4])):
                     # Eliminamos la moneda
                     moneda.obtener()
 
