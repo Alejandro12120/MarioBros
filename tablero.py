@@ -199,7 +199,7 @@ class Tablero:
         
         # Cada 20 segundos spawneamos una moneda
         # Al inicio de la partida no spawneamos moneda
-        if pyxel.frame_count - self.__frames_inicio_juego % 600 == 0 and pyxel.frame_count != self.__frames_inicio_juego:  # 20 segundos (30 fps * 20)
+        if ((pyxel.frame_count - self.__frames_inicio_juego) % 600 == 0) and pyxel.frame_count != self.__frames_inicio_juego:  # 20 segundos (30 fps * 20)
             self.fase.spawnear_moneda(random.choice(self.__spawner_enemigos))
         
         if self.fase.racha_enemigos % 3 == 0 and self.fase.racha_enemigos != 0:
