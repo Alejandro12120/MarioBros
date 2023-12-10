@@ -147,7 +147,8 @@ class Tablero:
             # Despawn de los enemigos, si no hay animación
             if not enemigo.animacion_muerto:
                 if enemigo.x < self.__despawn_enemigos[0][0] or enemigo.x > self.__despawn_enemigos[1][0]:
-                    if enemigo.y == self.__despawn_enemigos[0][1] or enemigo.y == self.__despawn_enemigos[1][1]:
+                    # Tenemos que hacer una correción ya que como las moscas van saltando, era muy dificil que la y coincidiese
+                    if enemigo.y >= self.__despawn_enemigos[0][1] - 3 or enemigo.y >= self.__despawn_enemigos[1][1] - 3:
                         a_despawnear.append(enemigo.id)
 
             # Colisiones con mario, en caso de que no esté en godmode

@@ -58,7 +58,8 @@ class Mario:
         self.__x += dir * self.__aceleracion_x
 
         # Si se sale por la derecha, aparece por la izquierda
-        if dir == 1 and self.__x >= ancho:
+        # Le hacemos una corrección de +8 para evitar un bug
+        if dir == 1 and self.__x + 8 >= ancho:
             self.__x = 0
         # Si se sale por la izquierda, aparece por la derecha
         elif dir == -1 and self.__x <= 0:
