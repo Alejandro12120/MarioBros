@@ -145,7 +145,6 @@ class Mario:
 
         @param parar: debemos para en la última animación
         """
-
         # Cambiamos la animación
         self.__animacion += 1
         # Reiniciamos la animación si se ha pasado

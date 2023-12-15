@@ -11,9 +11,6 @@ class Tablero:
         self.__ancho = ancho
         self.__alto = alto
 
-        self.__fase = Fase(self)
-        self.__puntuacion: int = 0
-
         # Esta lista contendrá dos tuplas con coordenadas x e y de donde saldrán los enemigos
         self.__spawner_enemigos = [(16, 7), (self.ancho - 16 - 12, 7)]
 
@@ -32,6 +29,13 @@ class Tablero:
         # Frames inicio juego, para calcular el tiempo
         # Ya que necesitamos que pasen 4 segundos desde que se pulsa el espacio para empezar
         self.__frames_inicio_juego = 0
+        
+        # 1 player or 2 players
+        self.__multijugador = True
+        
+        self.__fase = Fase(self)
+        self.__puntuacion: int = 0
+
 
     def update(self):
         # Controles:
@@ -63,24 +67,44 @@ class Tablero:
 
         # Si estamos en la animación de muerte de Mario, no podemos hacer nada
         if not self.fase.mario.animacion_muerto:
-            if pyxel.btn(pyxel.KEY_A) or pyxel.btn(pyxel.KEY_LEFT):
-                self.fase.mario.move_x(self.ancho, -1)
-            if pyxel.btn(pyxel.KEY_D) or pyxel.btn(pyxel.KEY_RIGHT):
-                self.fase.mario.move_x(self.ancho, 1)
-            if (pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.KEY_UP)) and self.fase.mario.toca_suelo(self.alto):
-                self.fase.mario.saltar(self.alto, pyxel.frame_count)
+            # Si estamos en multijugador tendremos distintos controles
+            if not self.__multijugador:
+                if pyxel.btn(pyxel.KEY_A) or pyxel.btn(pyxel.KEY_LEFT):
+                    self.fase.mario.move_x(self.ancho, -1)
+                if pyxel.btn(pyxel.KEY_D) or pyxel.btn(pyxel.KEY_RIGHT):
+                    self.fase.mario.move_x(self.ancho, 1)
+                if (pyxel.btn(pyxel.KEY_SPACE) or pyxel.btn(pyxel.KEY_UP)) and self.fase.mario.toca_suelo(self.alto):
+                    self.fase.mario.saltar(self.alto, pyxel.frame_count)
+            else:
+                if pyxel.btn(pyxel.KEY_A):
+                    self.fase.mario.move_x(self.ancho, -1)
+                if pyxel.btn(pyxel.KEY_LEFT):
+                    self.fase.luigi.move_x(self.ancho, -1)
+                
+                if pyxel.btn(pyxel.KEY_D):
+                    self.fase.mario.move_x(self.ancho, 1)
+                if pyxel.btn(pyxel.KEY_RIGHT):
+                    self.fase.luigi.move_x(self.ancho, 1)
+                    
+                if pyxel.btn(pyxel.KEY_SPACE) and self.fase.mario.toca_suelo(self.alto):
+                    self.fase.mario.saltar(self.alto, pyxel.frame_count)
+                if pyxel.btn(pyxel.KEY_UP) and self.fase.luigi.toca_suelo(self.alto):
+                    self.fase.luigi.saltar(self.alto, pyxel.frame_count)
+                    
             if pyxel.btnp(pyxel.KEY_E):
                 self.draw_hitboxes()
             if pyxel.btnp(pyxel.KEY_G):
                 self.fase.mario.godmode = not self.fase.mario.godmode
+                self.fase.luigi.godmode = not self.fase.luigi.godmode
             if pyxel.btnp(pyxel.KEY_M):
                 self.fase.spawnear_moneda(
                     random.choice(self.__spawner_enemigos))
 
         # Implementación de la gravedad
         self.fase.mario.move_y(self.alto, pyxel.frame_count, gravedad=True)
+        if self.__multijugador: self.fase.luigi.move_y(self.alto, pyxel.frame_count, gravedad=True)
 
-        # Animaciones de la muerte de Mario
+        # Animaciones de la muerte de Mario y Luigi
         if self.fase.mario.animacion_muerto:
             # Cada 15 segundos cambiamos el sprite
             if pyxel.frame_count % 15 == 0:
@@ -91,6 +115,18 @@ class Tablero:
             # Si Mario sale, del tablero, la animación termina
             if self.fase.mario.y >= self.__alto:
                 self.fase.mario.terminar_animacion_muerte()
+        
+        if self.__multijugador:
+            if self.fase.luigi.animacion_muerto:
+                # Cada 15 segundos cambiamos el sprite
+                if pyxel.frame_count % 15 == 0:
+                    self.fase.luigi.animar(True)
+
+                self.fase.luigi.y += 3
+
+                # Si Luigi sale, del tablero, la animación termina
+                if self.fase.luigi.y >= self.__alto:
+                    self.fase.luigi.terminar_animacion_muerte()
 
         a_despawnear = []
 
@@ -167,6 +203,24 @@ class Tablero:
                         enemigo.matar(self.fase.mario.direccion)
                     else:
                         self.fase.mario.matar()
+            
+            # Colisiones con luigi, en caso de que no esté en godmode
+            if self.__multijugador:
+                if not self.fase.luigi.godmode:
+                    # Obtenemos x en función de la dirección y con la corrección de hitbox
+                    if self.fase.luigi.direccion == 1:
+                        # La x si vamos para la derecha será igual al ancho menos 1, por la hitbox
+                        x_hitbox = self.fase.luigi.x + self.fase.luigi.sprite[3] - 1
+                    else:
+                        # La x si vamos para la izquierda será igual menos 1 por la hitbox
+                        x_hitbox = self.fase.luigi.x + 1
+
+                    # Comprobamos si golpea con la cabeza o con los pies
+                    if enemigo.golpea(x_hitbox, self.fase.luigi.y) or enemigo.golpea(x_hitbox, self.fase.luigi.y + self.fase.luigi.sprite[4]):
+                        if enemigo.tumbado:
+                            enemigo.matar(self.fase.luigi.direccion)
+                        else:
+                            self.fase.luigi.matar()
 
         for id in a_despawnear:
             self.fase.despawnear_enemigo(id, True)
@@ -235,6 +289,27 @@ class Tablero:
 
                     # Sumamos los puntos
                     self.__puntuacion += config.COGER_MONEDA
+            
+            # Colisiones de Luigi con las monedas
+            if self.__multijugador:
+                if (not self.fase.luigi.godmode and 
+                not self.fase.luigi.animacion_muerto and 
+                not moneda.eliminar):
+                    # Obtenemos la x de los dos extremos
+                    extremo_derecho = self.fase.luigi.x + self.fase.luigi.sprite[3] - 1
+                    extremo_izquierdo = self.fase.luigi.x + 1
+
+                    # Comprobamos si golpea con la cabeza o con los pies
+                    if (moneda.golpea(extremo_derecho, self.fase.luigi.y) or
+                        moneda.golpea(extremo_izquierdo, self.fase.luigi.y) or
+                        
+                        moneda.golpea(extremo_derecho, self.fase.luigi.y + self.fase.luigi.sprite[4]) or
+                        moneda.golpea(extremo_izquierdo, self.fase.luigi.y + self.fase.luigi.sprite[4])):
+                        # Eliminamos la moneda
+                        moneda.obtener()
+
+                        # Sumamos los puntos
+                        self.__puntuacion += config.COGER_MONEDA
 
             # Despawn de las monedas
             if moneda.x < self.__despawn_enemigos[0][0] or moneda.x > self.__despawn_enemigos[1][0]:
@@ -262,7 +337,13 @@ class Tablero:
             self.__frames_inicio_juego = pyxel.frame_count
 
         # Fin del juego
-        if self.fase.mario.vidas == 0:
+        if self.fase.mario.vidas == 0 and not self.__multijugador:
+            self.__fin_juego = True
+
+            # Terminamos la fase
+            self.__fase.terminar_fase()
+        
+        if self.__multijugador and (self.fase.mario.vidas == 0 or self.fase.luigi.vidas == 0):
             self.__fin_juego = True
 
             # Terminamos la fase
@@ -343,6 +424,19 @@ class Tablero:
                 self.fase.mario.sprite[4],
                 8,
             )
+            
+            """Dibujamos a Luigi, teniendo en cuenta la dirección"""
+            if self.__multijugador:
+                pyxel.blt(
+                    self.fase.luigi.x,
+                    self.fase.luigi.y,
+                    self.fase.luigi.sprite[0],
+                    self.fase.luigi.sprite[1],
+                    self.fase.luigi.sprite[2],
+                    self.fase.luigi.direccion * self.fase.luigi.sprite[3],
+                    self.fase.luigi.sprite[4],
+                    8,
+                )
 
             """Dibujamos los enemigos"""
             for enemigo in self.fase.enemigos.values():
@@ -386,6 +480,17 @@ class Tablero:
                         self.fase.mario.sprite[4],
                         7,
                     )
+                
+                if self.__multijugador:
+                    # Si luigi está en godmode no tiene hitbox, o si está con la animación de muerte
+                    if not self.fase.luigi.godmode and not self.fase.luigi.animacion_muerto:
+                        pyxel.rectb(
+                            self.fase.luigi.x + 2,
+                            self.fase.luigi.y,
+                            self.fase.luigi.sprite[3] - 2,
+                            self.fase.luigi.sprite[4],
+                            7,
+                        )
 
                 """Hitboxes de los bloques"""
                 for bloque in self.fase.bloques.values():
@@ -432,3 +537,7 @@ class Tablero:
     @property
     def fase(self):
         return self.__fase
+    
+    @property
+    def multijugador(self):
+        return self.__multijugador

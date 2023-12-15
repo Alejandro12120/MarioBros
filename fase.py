@@ -15,6 +15,8 @@ class Fase:
         """Esta clase será la encargada de gestionar la fase
         @param tablero: es el tablero en el que se dibujará la fase
         """
+        
+        self.__tablero = tablero
 
         # Estos diccionarios actuará como visibilidad, es decir todo lo que estén en los diccionarios se dibujará
         # Además los ids de los objetos serán las claves de los diccionarios
@@ -26,9 +28,10 @@ class Fase:
 
         self.__numero_fase = numero_fase
         self.__mario: Mario = Mario(80, 107, self.__bloques, self.__enemigos, 1)
-
-        self.__tablero = tablero
-
+        
+        if self.__tablero.multijugador:
+            self.__luigi: Mario = Mario(96, 107, self.__bloques, self.__enemigos, 2)
+        
         # self.__iniciar_fase()
 
     def iniciar_fase(self):
@@ -240,6 +243,11 @@ class Fase:
     def mario(self) -> Mario:
         """Mario"""
         return self.__mario
+
+    @property
+    def luigi(self) -> Mario:
+        """Luigi"""
+        return self.__luigi
     
     @property
     def racha_enemigos(self) -> int:
