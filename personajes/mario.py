@@ -168,6 +168,9 @@ class Mario:
         # Para evitar matarlo varias veces seguidas
         if self.__animacion_muerto: return
         
+        # Reiniciamos velocidad por si salta antes de morir
+        self.__velocidad_y = 0
+        
         self.__vidas -= 1
         self.__sprites = config.MARIO_MUERTO_SPRITE
         self.__animacion_muerto = True
