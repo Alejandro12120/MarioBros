@@ -127,6 +127,9 @@ class Mario:
                             enemigo.levantar()
                         else:
                             enemigo.tumbar(frames)
+                        
+                        # Pequeña animación de bote debido al golpe
+                        enemigo.saltar(alto, -1.5)
 
         # No puede salirse ni por arriba ni por abajo
         # Si la velocidad es negativa significa que va hacia arriba
